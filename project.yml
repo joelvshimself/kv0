@@ -15,14 +15,20 @@ targets:
     platform: iOS
     sources:
       - path: kv0
+    info:
+      path: kv0/Info.plist
+      properties:
+        UIAppFonts:
+          - SpaceGrotesk.ttf
+        UILaunchScreen:
+          UIColorName: ""
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kv0.app
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_CFBundleDisplayName: kv0
-        INFOPLIST_KEY_UIUserInterfaceStyle: Light
+        INFOPLIST_KEY_UIUserInterfaceStyle: Dark
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor

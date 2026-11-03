@@ -4,28 +4,28 @@ struct MetricColumnsView: View {
     let snapshot: DaySnapshot
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
+        HStack(spacing: 12) {
             metric(label: "sleep time", value: snapshot.sleepMinutes.hoursMinutes)
-            Rectangle()
-                .fill(Ink.sumi.opacity(0.18))
-                .frame(width: 0.8)
-                .padding(.horizontal, Space.margin)
             metric(label: "journey duration", value: snapshot.journeyMinutes.hoursMinutes)
         }
         .fixedSize(horizontal: false, vertical: true)
     }
 
     private func metric(label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(Typeface.caption)
-                .foregroundStyle(Ink.inkSoft)
-            Text(value)
-                .font(Typeface.metric)
-                .foregroundStyle(Ink.sumi)
-                .contentTransition(.numericText())
+        GlassCard {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(label)
+                    .font(Typeface.caption)
+                    .foregroundStyle(Nova.bone.opacity(0.6))
+                Text(value)
+                    .font(Typeface.metric)
+                    .tracking(Typeface.tracking(for: 34))
+                    .foregroundStyle(Nova.bone)
+                    .contentTransition(.numericText())
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
     }
 }

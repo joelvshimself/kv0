@@ -1,8 +1,9 @@
 # kv0
 
-A calm iOS companion for people who work hard and care about their sleep.
+An iOS companion for people who work hard and care about their sleep.
 One screen tells you how many hours you have until your next energy dip, how you slept,
-and how long your drive took, drawn as ink on washi paper.
+and how long your drive took. The visual language is adapted from
+[Nova30](https://nova30.lat): a dark sky, bone type and orange orbits.
 
 ## The day it follows
 
@@ -24,4 +25,5 @@ open kv0.xcodeproj
 The project is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen):
 `xcodegen generate`.
 
-Design tokens and principles live in [DESIGN.md](DESIGN.md).
+Design tokens and principles live in [DESIGN.md](DESIGN.md). Space Grotesk is bundled
+under the SIL Open Font License (`kv0/Resources/Fonts/OFL.txt`).

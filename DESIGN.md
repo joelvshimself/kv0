@@ -1,57 +1,50 @@
 # kv0 design notes
 
-kv0 sits with a hard worker through one day: wake, work, rest, go home, sleep.
-The screen should feel like a sheet of kozo paper on a desk, read slowly, not like a dashboard.
+kv0's visual language is adapted from [nova30.lat](https://nova30.lat) (Hotmart's Nova30):
+a night sky where a few bright bodies light up everything around them. In kv0 the bright body
+is your energy: the hours until your next dip.
 
 ## Principles
 
-- **Ma (間).** Empty space is the layout. Sections are separated by space and a single
-  hairline brushstroke, never by bordered cards.
-- **One loud thing.** The hours left until your dip is the only large element. Everything
-  else is quiet ink at reading size.
-- **Ink, not colour.** Charts are drawn as ink washes (sumi at varying opacity). Vermilion
-  appears in exactly one place per screen: the hanko seal that marks the dip on the time graph.
-- **Texture is material.** The ground is unbleached washi with visible fibres and a few sumi
-  specks, drawn procedurally so it never tiles.
+- **One star.** The hero number sits inside dashed orbits and is the only large element.
+  Everything else is quiet bone text at reading size.
+- **Orange is light.** Orange marks what is live: the planet tracking the time of day, the dip
+  on the alertness curve, last night's score bar, the dot in the picker.
+- **Glass over void.** Secondary content lives on frosted cards (20pt radius, white at 3%,
+  hairline edge) floating over the near-black sky.
+- **Constellation.** The background is a seeded starfield with two faint radial glows,
+  rust at upper left and ember at lower right, as on the Nova site.
 
 ## Colour
 
-| Token     | Hex       | Role                                   |
-|-----------|-----------|----------------------------------------|
-| washi     | `#EDE6D9` | Paper ground                           |
-| washiDeep | `#E2D8C6` | Fibres, chart track, picker plane      |
-| sumi      | `#1A1410` | Primary ink: hero, headings            |
-| inkSoft   | `#5A4838` | Secondary text, axis labels            |
-| moss      | `#5D6B4A` | Good-recovery tint in the score chart  |
-| shu       | `#A8342A` | Vermilion seal; the dip marker only    |
+| Token    | Hex       | Role                                        |
+|----------|-----------|---------------------------------------------|
+| void     | `#0D0D0D` | Sky / background                            |
+| surface  | `#1C1C1C` | Picker plane, grey moon                     |
+| bone     | `#F5F3EF` | All text and the alertness line             |
+| orange   | `#FF4000` | Live accent: dip, last night, orbits at 35% |
+| ember    | `#FF5733` | Planet, highlighted labels, glow            |
+| rust     | `#B85C3E` | Radial glow in the background               |
+| muted    | `#666666` | Axis labels, footnotes                      |
+| hairline | white 10% | Card and pill borders                       |
 
 ## Type
 
-- **Display:** system serif (New York), light, tight tracking. Used for the hero number and
-  the state sentence.
-- **Body:** system sans, regular, sentence case. No all-caps labels, no eyebrows.
-- Scale: 112 / 28 / 17 / 13. Hero numerals use monospaced digits so they don't jump on change.
+Space Grotesk (OFL, bundled in `kv0/Resources/Fonts`) stands in for the proprietary
+Hotmart Display and Hotmart Sans. Display sizes use Nova's -0.04em tracking.
 
-## Layout
+Scale: 140 hero / 34 metric / 30 sentence / 17 body / 13 caption. Numerals are monospaced so
+values don't jump when they change.
 
-```
- state sentence (serif 28)
+## Shapes
 
- 2.5                 <- hero, left aligned, 112pt
- hours until your dip
- ~~~~~~~~ alertness wash, seal at dip ~~~~~~~~
-
- sleep time        | journey duration
- 7h 20m            | 1h 05m
-
- sleep score, last 7 nights (ink bars)
-
- [ Working  v ]      <- paper plane, dropdown of journey states
-```
-
-Left aligned throughout, 24pt side margins, 40pt between sections.
+- Pills: fully rounded (Nova uses 50px), used for the state picker.
+- Cards: 20pt continuous corners.
+- Orbits: 1pt dashed rings, `[3, 5]` dash.
 
 ## Motion
 
-Only on state change: the hero crossfades with a numeric transition and the charts re-ink
-with a slow ease (0.8s). Nothing moves on its own. Reduce Motion swaps everything to a plain fade.
+On state change the sentence lights up character by character (Nova's headline reveal), the
+hero number rolls with a numeric transition, and the planet glides to its new position over
+0.8s. Nothing moves on its own. Reduce Motion shows the sentence immediately and shortens
+every transition to a 0.2s fade.

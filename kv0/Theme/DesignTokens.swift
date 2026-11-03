@@ -1,25 +1,37 @@
 import SwiftUI
 
-enum Ink {
-    static let washi = Color(hex: 0xEDE6D9)
-    static let washiDeep = Color(hex: 0xE2D8C6)
-    static let sumi = Color(hex: 0x1A1410)
-    static let inkSoft = Color(hex: 0x5A4838)
-    static let moss = Color(hex: 0x5D6B4A)
-    static let shu = Color(hex: 0xA8342A)
+enum Nova {
+    static let void = Color(hex: 0x0D0D0D)
+    static let surface = Color(hex: 0x1C1C1C)
+    static let bone = Color(hex: 0xF5F3EF)
+    static let orange = Color(hex: 0xFF4000)
+    static let ember = Color(hex: 0xFF5733)
+    static let rust = Color(hex: 0xB85C3E)
+    static let muted = Color(hex: 0x666666)
+    static let hairline = Color.white.opacity(0.1)
 }
 
 enum Typeface {
-    static let hero = Font.system(size: 112, weight: .light, design: .serif).monospacedDigit()
-    static let sentence = Font.system(size: 28, weight: .regular, design: .serif)
-    static let metric = Font.system(size: 28, weight: .light, design: .serif).monospacedDigit()
-    static let body = Font.system(size: 17, weight: .regular)
-    static let caption = Font.system(size: 13, weight: .regular)
+    static let family = "Space Grotesk"
+
+    static let hero = display(140, weight: .medium)
+    static let sentence = display(30, weight: .medium)
+    static let metric = display(34, weight: .medium)
+    static let body = Font.custom(family, size: 17).weight(.regular)
+    static let caption = Font.custom(family, size: 13).weight(.regular)
+
+    /// Nova sets display type at -0.04em.
+    static func tracking(for size: CGFloat) -> CGFloat { size * -0.04 }
+
+    private static func display(_ size: CGFloat, weight: Font.Weight) -> Font {
+        Font.custom(family, size: size).weight(weight).monospacedDigit()
+    }
 }
 
 enum Space {
     static let margin: CGFloat = 24
-    static let section: CGFloat = 40
+    static let section: CGFloat = 32
+    static let cardRadius: CGFloat = 20
 }
 
 enum Motion {

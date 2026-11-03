@@ -8,40 +8,58 @@
 
 /* Begin PBXBuildFile section */
 		05E22EC6D9AC2BA6B0E016ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC0FD078867A719983DEFC07 /* Assets.xcassets */; };
-		21BC64C77533F55CA38CCB58 /* DipHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C140984E8EF0A29E11A77BC6 /* DipHeroView.swift */; };
+		06B5F408BFEE2AF466B3FD3B /* StarfieldBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61762F323B0E206C98E40E3F /* StarfieldBackground.swift */; };
+		072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */; };
 		2356576CB94F6E724C10B7E1 /* kv0App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E73E12E7A0C3E198A5BD83 /* kv0App.swift */; };
 		3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */; };
 		380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008724D48FFB6FD15F3565D5 /* DesignTokens.swift */; };
+		388D83660C2604359453E895 /* SpaceGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */; };
 		46AFDCA2BC8BBD2A043C0042 /* StatePickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E258F1F728C0A461B50CC630 /* StatePickerBar.swift */; };
 		4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1354329C3DB77DF41D0A085A /* JourneyState.swift */; };
-		5946D7574119DA587309BC54 /* WashiBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C65185D670BDF29C2A5DA46 /* WashiBackground.swift */; };
 		72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */; };
 		841F288F8F3CB5DB1500ABED /* SleepScoreChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */; };
 		B132623D48DC2BF9DC5D5D3E /* TimeGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */; };
+		C88E9D1DE51BF2846016E8CE /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = DE3A098A423BD8B4EE2A251E /* OFL.txt */; };
+		D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D2994E0758B143A0AEDF43 /* RevealText.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008724D48FFB6FD15F3565D5 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
 		097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricColumnsView.swift; sourceTree = "<group>"; };
 		1354329C3DB77DF41D0A085A /* JourneyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyState.swift; sourceTree = "<group>"; };
-		1C65185D670BDF29C2A5DA46 /* WashiBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WashiBackground.swift; sourceTree = "<group>"; };
 		1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScoreChart.swift; sourceTree = "<group>"; };
+		21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SpaceGrotesk.ttf; sourceTree = "<group>"; };
 		43E73E12E7A0C3E198A5BD83 /* kv0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kv0App.swift; sourceTree = "<group>"; };
+		61762F323B0E206C98E40E3F /* StarfieldBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarfieldBackground.swift; sourceTree = "<group>"; };
+		6C66037691703FC87C33ED9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitHero.swift; sourceTree = "<group>"; };
 		98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeGraphView.swift; sourceTree = "<group>"; };
+		B2D2994E0758B143A0AEDF43 /* RevealText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealText.swift; sourceTree = "<group>"; };
 		BC0FD078867A719983DEFC07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C140984E8EF0A29E11A77BC6 /* DipHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DipHeroView.swift; sourceTree = "<group>"; };
 		DB6C19C9CCEAD124C2CC98ED /* kv0.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = kv0.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE3A098A423BD8B4EE2A251E /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		E258F1F728C0A461B50CC630 /* StatePickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatePickerBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		045A276213C13CA9D9CBF9DD /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				DE3A098A423BD8B4EE2A251E /* OFL.txt */,
+				21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		13D8CC67B99F3613F7953A72 /* kv0 */ = {
 			isa = PBXGroup;
 			children = (
 				BC0FD078867A719983DEFC07 /* Assets.xcassets */,
+				6C66037691703FC87C33ED9A /* Info.plist */,
 				FB2D137F5C2688F1D33FBA8D /* App */,
 				DFA990F7DC7AF4224798A143 /* Models */,
+				F7DF3B3651E4F493B20C4396 /* Resources */,
 				45DCB6A39FA2FC9E642FE2C8 /* Theme */,
 				ECF771016F4FD1514343C609 /* Views */,
 			);
@@ -52,7 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				008724D48FFB6FD15F3565D5 /* DesignTokens.swift */,
-				1C65185D670BDF29C2A5DA46 /* WashiBackground.swift */,
+				61762F323B0E206C98E40E3F /* StarfieldBackground.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -60,8 +78,9 @@
 		70D9E15D4564C576347B309F /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				C140984E8EF0A29E11A77BC6 /* DipHeroView.swift */,
 				097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */,
+				7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */,
+				B2D2994E0758B143A0AEDF43 /* RevealText.swift */,
 				1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */,
 				E258F1F728C0A461B50CC630 /* StatePickerBar.swift */,
 				98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */,
@@ -100,6 +119,14 @@
 				70D9E15D4564C576347B309F /* Components */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		F7DF3B3651E4F493B20C4396 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				045A276213C13CA9D9CBF9DD /* Fonts */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		FB2D137F5C2688F1D33FBA8D /* App */ = {
@@ -170,6 +197,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				05E22EC6D9AC2BA6B0E016ED /* Assets.xcassets in Resources */,
+				C88E9D1DE51BF2846016E8CE /* OFL.txt in Resources */,
+				388D83660C2604359453E895 /* SpaceGrotesk.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,13 +211,14 @@
 			files = (
 				72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */,
 				380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */,
-				21BC64C77533F55CA38CCB58 /* DipHeroView.swift in Sources */,
 				4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */,
 				3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */,
+				072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */,
+				D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */,
 				841F288F8F3CB5DB1500ABED /* SleepScoreChart.swift in Sources */,
+				06B5F408BFEE2AF466B3FD3B /* StarfieldBackground.swift in Sources */,
 				46AFDCA2BC8BBD2A043C0042 /* StatePickerBar.swift in Sources */,
 				B132623D48DC2BF9DC5D5D3E /* TimeGraphView.swift in Sources */,
-				5946D7574119DA587309BC54 /* WashiBackground.swift in Sources */,
 				2356576CB94F6E724C10B7E1 /* kv0App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -204,10 +234,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kv0/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kv0;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -349,10 +379,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kv0/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kv0;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

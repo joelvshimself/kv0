@@ -1,7 +1,7 @@
 import Charts
 import SwiftUI
 
-/// Alertness across the day as an ink wash. The vermilion seal marks the dip.
+/// Alertness across the day. The glowing orange point marks the dip.
 struct TimeGraphView: View {
     let snapshot: DaySnapshot
 
@@ -15,35 +15,35 @@ struct TimeGraphView: View {
                 AreaMark(x: .value("Hour", point.hour), y: .value("Alertness", point.level))
                     .interpolationMethod(.catmullRom)
                     .foregroundStyle(
-                        LinearGradient(colors: [Ink.sumi.opacity(0.22), Ink.sumi.opacity(0.02)],
+                        LinearGradient(colors: [Nova.orange.opacity(0.35), Nova.orange.opacity(0)],
                                        startPoint: .top, endPoint: .bottom)
                     )
                 LineMark(x: .value("Hour", point.hour), y: .value("Alertness", point.level))
                     .interpolationMethod(.catmullRom)
-                    .foregroundStyle(Ink.sumi.opacity(0.8))
-                    .lineStyle(StrokeStyle(lineWidth: 1.4, lineCap: .round))
+                    .foregroundStyle(Nova.bone.opacity(0.9))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, lineCap: .round))
             }
 
             RuleMark(x: .value("Now", snapshot.nowHour))
-                .foregroundStyle(Ink.inkSoft.opacity(0.6))
-                .lineStyle(StrokeStyle(lineWidth: 0.8, dash: [2, 3]))
+                .foregroundStyle(Nova.muted)
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
                 .annotation(position: .top, alignment: .center, spacing: 2) {
                     Text("now")
                         .font(Typeface.caption)
-                        .foregroundStyle(Ink.inkSoft)
+                        .foregroundStyle(Nova.bone.opacity(0.6))
                 }
 
             PointMark(x: .value("Dip", snapshot.dipHour), y: .value("Alertness", dipLevel))
                 .symbol {
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(Ink.shu)
-                        .frame(width: 11, height: 11)
-                        .rotationEffect(.degrees(-4))
+                    Circle()
+                        .fill(Nova.orange)
+                        .frame(width: 10, height: 10)
+                        .shadow(color: Nova.orange, radius: 8)
                 }
-                .annotation(position: .bottom, spacing: 4) {
+                .annotation(position: .bottom, spacing: 6) {
                     Text("dip")
                         .font(Typeface.caption)
-                        .foregroundStyle(Ink.shu)
+                        .foregroundStyle(Nova.ember)
                 }
         }
         .chartXScale(domain: snapshot.dayStart...snapshot.dayEnd)
@@ -55,7 +55,7 @@ struct TimeGraphView: View {
                     if let hour = value.as(Double.self) {
                         Text(String(format: "%02.0f", hour.truncatingRemainder(dividingBy: 24)))
                             .font(Typeface.caption)
-                            .foregroundStyle(Ink.inkSoft)
+                            .foregroundStyle(Nova.muted)
                     }
                 }
             }

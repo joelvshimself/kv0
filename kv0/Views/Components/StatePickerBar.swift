@@ -11,22 +11,27 @@ struct StatePickerBar: View {
                 }
             }
         } label: {
-            HStack {
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Nova.orange)
+                    .frame(width: 8, height: 8)
+                    .shadow(color: Nova.orange, radius: 6)
                 Text(selection.title)
-                    .font(Typeface.body)
-                    .foregroundStyle(Ink.sumi)
+                    .font(Typeface.body.weight(.medium))
+                    .foregroundStyle(Nova.bone)
                 Spacer()
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(Ink.inkSoft)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Nova.bone.opacity(0.6))
             }
-            .padding(.horizontal, 20)
-            .frame(height: 52)
+            .padding(.horizontal, 22)
+            .frame(height: 56)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Ink.washiDeep.opacity(0.85))
-                    .shadow(color: Ink.sumi.opacity(0.08), radius: 10, y: 4)
+                Capsule()
+                    .fill(.ultraThinMaterial.opacity(0.5))
+                    .background(Capsule().fill(Nova.surface.opacity(0.85)))
             )
+            .overlay(Capsule().strokeBorder(Nova.hairline, lineWidth: 1))
         }
         .accessibilityLabel("Moment of the day: \(selection.title)")
     }
