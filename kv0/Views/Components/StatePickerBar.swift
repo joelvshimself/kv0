@@ -2,12 +2,13 @@ import SwiftUI
 
 struct StatePickerBar: View {
     @Binding var selection: JourneyState
+    @Environment(\.copy) private var copy
 
     var body: some View {
         Menu {
-            Picker("Moment of the day", selection: $selection) {
+            Picker(copy.momentOfDay, selection: $selection) {
                 ForEach(JourneyState.allCases) { state in
-                    Text(state.title).tag(state)
+                    Text(copy.state(state).title).tag(state)
                 }
             }
         } label: {
@@ -16,7 +17,7 @@ struct StatePickerBar: View {
                     .fill(Nova.orange)
                     .frame(width: 8, height: 8)
                     .shadow(color: Nova.orange, radius: 6)
-                Text(selection.title)
+                Text(copy.state(selection).title)
                     .font(Typeface.body.weight(.medium))
                     .foregroundStyle(Nova.bone)
                 Spacer()
@@ -33,6 +34,6 @@ struct StatePickerBar: View {
             )
             .overlay(Capsule().strokeBorder(Nova.hairline, lineWidth: 1))
         }
-        .accessibilityLabel("Moment of the day: \(selection.title)")
+        .accessibilityLabel("\(copy.momentOfDay): \(copy.state(selection).title)")
     }
 }

@@ -2,11 +2,12 @@ import SwiftUI
 
 struct MetricColumnsView: View {
     let snapshot: DaySnapshot
+    @Environment(\.copy) private var copy
 
     var body: some View {
         HStack(spacing: 12) {
-            metric(label: "sleep time", value: snapshot.sleepMinutes.hoursMinutes)
-            metric(label: "journey duration", value: snapshot.journeyMinutes.hoursMinutes)
+            metric(label: copy.sleepTime, value: copy.duration(snapshot.sleepMinutes))
+            metric(label: copy.journeyDuration, value: copy.duration(snapshot.journeyMinutes))
         }
         .fixedSize(horizontal: false, vertical: true)
     }
@@ -17,6 +18,8 @@ struct MetricColumnsView: View {
                 Text(label)
                     .font(Typeface.caption)
                     .foregroundStyle(Nova.bone.opacity(0.6))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 Text(value)
                     .font(Typeface.metric)
                     .tracking(Typeface.tracking(for: 34))

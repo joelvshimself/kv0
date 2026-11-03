@@ -3,22 +3,24 @@ import SwiftUI
 
 struct SleepScoreChart: View {
     let nights: [NightScore]
+    @Environment(\.copy) private var copy
 
     var body: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text("sleep score")
+                    Text(copy.sleepScore)
                         .font(Typeface.caption)
                         .foregroundStyle(Nova.bone.opacity(0.6))
                     Spacer()
-                    Text("last 7 nights")
+                    Text(copy.lastNights)
                         .font(Typeface.caption)
                         .foregroundStyle(Nova.muted)
                 }
 
                 Chart(nights) { night in
-                    BarMark(x: .value("Night", night.day), y: .value("Score", night.score), width: .ratio(0.42))
+                    BarMark(x: .value("Night", copy.weekdays[night.index]),
+                            y: .value("Score", night.score), width: .ratio(0.42))
                         .foregroundStyle(color(for: night))
                         .clipShape(Capsule())
                         .annotation(position: .top, spacing: 4) {
@@ -38,7 +40,7 @@ struct SleepScoreChart: View {
                 }
                 .frame(height: 110)
 
-                Text("Based on 7 nights. Readings sharpen as kv0 learns your rhythm.")
+                Text(copy.learningNote)
                     .font(Typeface.caption)
                     .foregroundStyle(Nova.muted)
                     .fixedSize(horizontal: false, vertical: true)

@@ -4,62 +4,52 @@ enum JourneyState: String, CaseIterable, Identifiable {
     case morning
     case working
     case breakDue
-    case home
+    case finishWork
 
     var id: String { rawValue }
 
-    var title: String {
-        switch self {
-        case .morning: "Morning"
-        case .working: "Working"
-        case .breakDue: "Break due"
-        case .home: "Home"
-        }
-    }
+    func snapshot(_ copy: Copy) -> DaySnapshot {
+        let text = copy.state(self)
+        let sleepMinutes = 7 * 60 + 20
 
-    var snapshot: DaySnapshot {
         switch self {
         case .morning:
-            DaySnapshot(
-                sentence: "You slept deeply. Today is a good day to start on the hard thing.",
-                heroValue: 86,
-                heroFormat: .whole,
-                heroLabel: "sleep score, last night",
-                suggestions: [],
-                sleepMinutes: 7 * 60 + 20,
+            return DaySnapshot(
+                text: text,
+                heroValue: Double(sleepMinutes) / 60,
+                heroText: copy.duration(sleepMinutes),
+                orbitStyle: .rest,
+                sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
                 nowHour: 7.5
             )
         case .working:
-            DaySnapshot(
-                sentence: "Steady and focused. You have a long clear stretch ahead.",
+            return DaySnapshot(
+                text: text,
                 heroValue: 2.5,
-                heroFormat: .decimal,
-                heroLabel: "hours until your dip",
-                suggestions: [],
-                sleepMinutes: 7 * 60 + 20,
+                heroText: "2.5",
+                orbitStyle: .energy,
+                sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
                 nowHour: 12.5
             )
         case .breakDue:
-            DaySnapshot(
-                sentence: "Almost three hours without a pause. Step away for fifteen minutes.",
+            return DaySnapshot(
+                text: text,
                 heroValue: 2.7,
-                heroFormat: .decimal,
-                heroLabel: "hours since your last break",
-                suggestions: ["Walk outside without your phone", "Drink a glass of water", "Look at something far away"],
-                sleepMinutes: 7 * 60 + 20,
+                heroText: "2.7",
+                orbitStyle: .energy,
+                sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
                 nowHour: 14.3
             )
-        case .home:
-            DaySnapshot(
-                sentence: "You worked well today. Let the evening be slow.",
+        case .finishWork:
+            return DaySnapshot(
+                text: text,
                 heroValue: 8,
-                heroFormat: .whole,
-                heroLabel: "hours of sleep to recover tonight",
-                suggestions: ["You usually fall asleep around 23:40"],
-                sleepMinutes: 7 * 60 + 20,
+                heroText: "8",
+                orbitStyle: .energy,
+                sleepMinutes: sleepMinutes,
                 journeyMinutes: 70,
                 nowHour: 19.5
             )
@@ -67,14 +57,18 @@ enum JourneyState: String, CaseIterable, Identifiable {
     }
 }
 
-struct DaySnapshot {
-    enum HeroFormat { case whole, decimal }
+enum OrbitStyle {
+    /// Working hours: full-size orbits, even dashes.
+    case energy
+    /// Morning, after sleep: slightly drawn-in orbits with sparser dashes.
+    case rest
+}
 
-    let sentence: String
+struct DaySnapshot {
+    let text: StateCopy
     let heroValue: Double
-    let heroFormat: HeroFormat
-    let heroLabel: String
-    let suggestions: [String]
+    let heroText: String
+    let orbitStyle: OrbitStyle
     let sleepMinutes: Int
     /// Time spent driving to and from work today.
     let journeyMinutes: Int
@@ -83,13 +77,6 @@ struct DaySnapshot {
     let dipHour: Double = 15.0
     let dayStart: Double = 6
     let dayEnd: Double = 24
-
-    var heroText: String {
-        switch heroFormat {
-        case .whole: String(format: "%.0f", heroValue)
-        case .decimal: String(format: "%.1f", heroValue)
-        }
-    }
 }
 
 struct AlertnessPoint: Identifiable {
@@ -99,9 +86,9 @@ struct AlertnessPoint: Identifiable {
 }
 
 struct NightScore: Identifiable {
-    let day: String
+    let index: Int
     let score: Int
-    var id: String { day }
+    var id: Int { index }
 }
 
 enum Rhythm {
@@ -113,19 +100,8 @@ enum Rhythm {
         return AlertnessPoint(hour: h, level: max(0.05, circadian - dip - wake))
     }
 
-    static let nights: [NightScore] = [
-        NightScore(day: "Wed", score: 72),
-        NightScore(day: "Thu", score: 80),
-        NightScore(day: "Fri", score: 68),
-        NightScore(day: "Sat", score: 85),
-        NightScore(day: "Sun", score: 78),
-        NightScore(day: "Mon", score: 82),
-        NightScore(day: "Tue", score: 86),
-    ]
-}
-
-extension Int {
-    var hoursMinutes: String {
-        "\(self / 60)h \(String(format: "%02d", self % 60))m"
+    /// Oldest first; index lines up with `Copy.weekdays`.
+    static let nights: [NightScore] = [72, 80, 68, 85, 78, 82, 86].enumerated().map {
+        NightScore(index: $0.offset, score: $0.element)
     }
 }

@@ -5,7 +5,16 @@ import SwiftUI
 struct OrbitHero: View {
     let snapshot: DaySnapshot
 
-    private let orbits: [CGFloat] = [340, 250, 160]
+    private let frameDiameter: CGFloat = 340
+
+    private var orbits: [CGFloat] {
+        let base: [CGFloat] = [340, 250, 160]
+        return snapshot.orbitStyle == .rest ? base.map { $0 * 0.92 } : base
+    }
+
+    private var dash: [CGFloat] {
+        snapshot.orbitStyle == .rest ? [2, 6] : [3, 5]
+    }
 
     private var dayProgress: Double {
         (snapshot.nowHour - snapshot.dayStart) / (snapshot.dayEnd - snapshot.dayStart)
@@ -13,11 +22,11 @@ struct OrbitHero: View {
 
     var body: some View {
         ZStack {
-            ForEach(orbits, id: \.self) { diameter in
+            ForEach(orbits.indices, id: \.self) { index in
                 Circle()
                     .stroke(Nova.orange.opacity(0.35),
-                            style: StrokeStyle(lineWidth: 1, dash: [3, 5]))
-                    .frame(width: diameter, height: diameter)
+                            style: StrokeStyle(lineWidth: 1, dash: dash))
+                    .frame(width: orbits[index], height: orbits[index])
             }
 
             satellite(on: orbits[0], angle: dayProgress * 2 * .pi - .pi / 2) {
@@ -39,9 +48,10 @@ struct OrbitHero: View {
                     .tracking(Typeface.tracking(for: 140))
                     .foregroundStyle(Nova.bone)
                     .contentTransition(.numericText(value: snapshot.heroValue))
-                    .minimumScaleFactor(0.6)
+                    .minimumScaleFactor(0.45)
                     .lineLimit(1)
-                Text(snapshot.heroLabel)
+                    .frame(maxWidth: orbits[1])
+                Text(snapshot.text.heroLabel)
                     .font(Typeface.body)
                     .foregroundStyle(Nova.bone.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -49,13 +59,13 @@ struct OrbitHero: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: orbits[0] + 20)
+        .frame(height: frameDiameter + 20)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(snapshot.heroText) \(snapshot.heroLabel)")
+        .accessibilityLabel("\(snapshot.heroText) \(snapshot.text.heroLabel)")
     }
 
     private func satellite<Planet: View>(on diameter: CGFloat, angle: Double,
-                                    @ViewBuilder planet: () -> Planet) -> some View {
+                                         @ViewBuilder planet: () -> Planet) -> some View {
         planet()
             .offset(x: cos(angle) * diameter / 2, y: sin(angle) * diameter / 2)
     }

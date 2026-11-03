@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0092BD0E904B03F7CAA349C9 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDC8E627833363A9E75BB8 /* AppLanguage.swift */; };
 		05E22EC6D9AC2BA6B0E016ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC0FD078867A719983DEFC07 /* Assets.xcassets */; };
 		06B5F408BFEE2AF466B3FD3B /* StarfieldBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61762F323B0E206C98E40E3F /* StarfieldBackground.swift */; };
 		072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */; };
@@ -16,11 +17,15 @@
 		388D83660C2604359453E895 /* SpaceGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */; };
 		46AFDCA2BC8BBD2A043C0042 /* StatePickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E258F1F728C0A461B50CC630 /* StatePickerBar.swift */; };
 		4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1354329C3DB77DF41D0A085A /* JourneyState.swift */; };
+		67E3C6A895EF06EC81B17DBB /* LanguageSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950FCC03872218433B3E0745 /* LanguageSheet.swift */; };
 		72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */; };
 		841F288F8F3CB5DB1500ABED /* SleepScoreChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */; };
+		91BF47CBEB0BCAF554C5F8A6 /* InfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F579D8669EC1B30C3DD1F6E /* InfoSheet.swift */; };
 		B132623D48DC2BF9DC5D5D3E /* TimeGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */; };
 		C88E9D1DE51BF2846016E8CE /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = DE3A098A423BD8B4EE2A251E /* OFL.txt */; };
 		D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D2994E0758B143A0AEDF43 /* RevealText.swift */; };
+		E4AA72B3F48B84D54335C9F5 /* GlassIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219FDEB3A38155F859B43FCE /* GlassIconButton.swift */; };
+		E8C8438E52F89F6510E65D38 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD34750674FE9426C6358C84 /* L10n.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,18 +33,23 @@
 		097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricColumnsView.swift; sourceTree = "<group>"; };
 		1354329C3DB77DF41D0A085A /* JourneyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyState.swift; sourceTree = "<group>"; };
 		1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScoreChart.swift; sourceTree = "<group>"; };
+		219FDEB3A38155F859B43FCE /* GlassIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassIconButton.swift; sourceTree = "<group>"; };
 		21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SpaceGrotesk.ttf; sourceTree = "<group>"; };
+		3F579D8669EC1B30C3DD1F6E /* InfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoSheet.swift; sourceTree = "<group>"; };
 		43E73E12E7A0C3E198A5BD83 /* kv0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kv0App.swift; sourceTree = "<group>"; };
 		61762F323B0E206C98E40E3F /* StarfieldBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarfieldBackground.swift; sourceTree = "<group>"; };
 		6C66037691703FC87C33ED9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitHero.swift; sourceTree = "<group>"; };
+		950FCC03872218433B3E0745 /* LanguageSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSheet.swift; sourceTree = "<group>"; };
 		98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeGraphView.swift; sourceTree = "<group>"; };
 		B2D2994E0758B143A0AEDF43 /* RevealText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealText.swift; sourceTree = "<group>"; };
 		BC0FD078867A719983DEFC07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB6C19C9CCEAD124C2CC98ED /* kv0.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = kv0.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE3A098A423BD8B4EE2A251E /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		E258F1F728C0A461B50CC630 /* StatePickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatePickerBar.swift; sourceTree = "<group>"; };
+		FBBDC8E627833363A9E75BB8 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		FD34750674FE9426C6358C84 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -78,6 +88,9 @@
 		70D9E15D4564C576347B309F /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				219FDEB3A38155F859B43FCE /* GlassIconButton.swift */,
+				3F579D8669EC1B30C3DD1F6E /* InfoSheet.swift */,
+				950FCC03872218433B3E0745 /* LanguageSheet.swift */,
 				097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */,
 				7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */,
 				B2D2994E0758B143A0AEDF43 /* RevealText.swift */,
@@ -107,7 +120,9 @@
 		DFA990F7DC7AF4224798A143 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				FBBDC8E627833363A9E75BB8 /* AppLanguage.swift */,
 				1354329C3DB77DF41D0A085A /* JourneyState.swift */,
+				FD34750674FE9426C6358C84 /* L10n.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -209,9 +224,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0092BD0E904B03F7CAA349C9 /* AppLanguage.swift in Sources */,
 				72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */,
 				380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */,
+				E4AA72B3F48B84D54335C9F5 /* GlassIconButton.swift in Sources */,
+				91BF47CBEB0BCAF554C5F8A6 /* InfoSheet.swift in Sources */,
 				4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */,
+				E8C8438E52F89F6510E65D38 /* L10n.swift in Sources */,
+				67E3C6A895EF06EC81B17DBB /* LanguageSheet.swift in Sources */,
 				3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */,
 				072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */,
 				D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */,

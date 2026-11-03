@@ -4,6 +4,7 @@ import SwiftUI
 /// Alertness across the day. The glowing orange point marks the dip.
 struct TimeGraphView: View {
     let snapshot: DaySnapshot
+    @Environment(\.copy) private var copy
 
     private var dipLevel: Double {
         Rhythm.alertness.min { abs($0.hour - snapshot.dipHour) < abs($1.hour - snapshot.dipHour) }?.level ?? 0
@@ -28,7 +29,7 @@ struct TimeGraphView: View {
                 .foregroundStyle(Nova.muted)
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
                 .annotation(position: .top, alignment: .center, spacing: 2) {
-                    Text("now")
+                    Text(copy.now)
                         .font(Typeface.caption)
                         .foregroundStyle(Nova.bone.opacity(0.6))
                 }
@@ -40,14 +41,16 @@ struct TimeGraphView: View {
                         .frame(width: 10, height: 10)
                         .shadow(color: Nova.orange, radius: 8)
                 }
-                .annotation(position: .bottom, spacing: 6) {
-                    Text("dip")
+                .annotation(position: .bottom, spacing: 6,
+                            overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                    Text(copy.dip)
                         .font(Typeface.caption)
                         .foregroundStyle(Nova.ember)
                 }
         }
         .chartXScale(domain: snapshot.dayStart...snapshot.dayEnd)
-        .chartYScale(domain: 0...1)
+        .chartYScale(domain: -0.12...1)
+        .chartPlotStyle { $0.padding(.bottom, 22) }
         .chartYAxis(.hidden)
         .chartXAxis {
             AxisMarks(values: [6, 9, 12, 15, 18, 21, 24]) { value in
@@ -60,7 +63,7 @@ struct TimeGraphView: View {
                 }
             }
         }
-        .frame(height: 120)
-        .accessibilityLabel("Alertness through the day, with a dip at 15:00")
+        .frame(height: 140)
+        .accessibilityLabel(copy.graphAccessibility)
     }
 }
