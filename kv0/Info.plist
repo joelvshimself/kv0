@@ -27,5 +27,9 @@
 		<key>UIColorName</key>
 		<string></string>
 	</dict>
+	<key>NSHealthShareUsageDescription</key>
+	<string>kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>kv0 needs access to your health data to track your sleep patterns.</string>
 </dict>
 </plist>

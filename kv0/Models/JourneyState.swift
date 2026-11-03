@@ -21,7 +21,10 @@ enum JourneyState: String, CaseIterable, Identifiable {
                 orbitStyle: .rest,
                 sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
-                nowHour: 7.5
+                nowHour: 7.5,
+                dipHour: 15.0,
+                dayStart: 6,
+                dayEnd: 24
             )
         case .working:
             return DaySnapshot(
@@ -31,7 +34,10 @@ enum JourneyState: String, CaseIterable, Identifiable {
                 orbitStyle: .energy,
                 sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
-                nowHour: 12.5
+                nowHour: 12.5,
+                dipHour: 15.0,
+                dayStart: 6,
+                dayEnd: 24
             )
         case .breakDue:
             return DaySnapshot(
@@ -41,7 +47,10 @@ enum JourneyState: String, CaseIterable, Identifiable {
                 orbitStyle: .energy,
                 sleepMinutes: sleepMinutes,
                 journeyMinutes: 35,
-                nowHour: 14.3
+                nowHour: 14.3,
+                dipHour: 15.0,
+                dayStart: 6,
+                dayEnd: 24
             )
         case .finishWork:
             return DaySnapshot(
@@ -51,7 +60,10 @@ enum JourneyState: String, CaseIterable, Identifiable {
                 orbitStyle: .energy,
                 sleepMinutes: sleepMinutes,
                 journeyMinutes: 70,
-                nowHour: 19.5
+                nowHour: 19.5,
+                dipHour: 15.0,
+                dayStart: 6,
+                dayEnd: 24
             )
         }
     }
@@ -74,9 +86,27 @@ struct DaySnapshot {
     let journeyMinutes: Int
     let nowHour: Double
 
-    let dipHour: Double = 15.0
-    let dayStart: Double = 6
-    let dayEnd: Double = 24
+    let dipHour: Double
+    let dayStart: Double
+    let dayEnd: Double
+    var alertnessCurve: [AlertnessPoint]?
+    
+    init(text: StateCopy, heroValue: Double, heroText: String, orbitStyle: OrbitStyle,
+         sleepMinutes: Int, journeyMinutes: Int, nowHour: Double,
+         dipHour: Double = 15.0, dayStart: Double = 6, dayEnd: Double = 24,
+         alertnessCurve: [AlertnessPoint]? = nil) {
+        self.text = text
+        self.heroValue = heroValue
+        self.heroText = heroText
+        self.orbitStyle = orbitStyle
+        self.sleepMinutes = sleepMinutes
+        self.journeyMinutes = journeyMinutes
+        self.nowHour = nowHour
+        self.dipHour = dipHour
+        self.dayStart = dayStart
+        self.dayEnd = dayEnd
+        self.alertnessCurve = alertnessCurve
+    }
 }
 
 struct AlertnessPoint: Identifiable {
