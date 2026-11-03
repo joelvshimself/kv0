@@ -40,12 +40,13 @@ struct TimeGraphView: View {
                         .fill(Nova.orange)
                         .frame(width: 10, height: 10)
                         .shadow(color: Nova.orange, radius: 8)
-                }
-                .annotation(position: .bottom, spacing: 6,
-                            overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                    Text(copy.dip)
-                        .font(Typeface.caption)
-                        .foregroundStyle(Nova.ember)
+                        .overlay(alignment: .top) {
+                            Text(copy.dip)
+                                .font(Typeface.caption)
+                                .foregroundStyle(Nova.ember)
+                                .fixedSize()
+                                .offset(y: 16)
+                        }
                 }
         }
         .chartXScale(domain: snapshot.dayStart...snapshot.dayEnd)

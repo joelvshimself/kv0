@@ -12,18 +12,13 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView {
-            DayLayout(state: state, copy: copy)
+            DayLayout(state: state, copy: copy, onInfo: { showingInfo = true })
                 .padding(.horizontal, Space.margin)
                 .padding(.bottom, 16)
         }
         .scrollIndicators(.hidden)
         .safeAreaInset(edge: .top) {
-            CornerButtons(
-                copy: copy,
-                showsInfo: !snapshot.text.suggestions.isEmpty,
-                onInfo: { showingInfo = true },
-                onSettings: { showingLanguage = true }
-            )
+            CornerButtons(copy: copy, onSettings: { showingLanguage = true })
             .padding(.horizontal, Space.margin)
             .padding(.top, 4)
         }
@@ -48,17 +43,11 @@ struct ContentView: View {
 
 struct CornerButtons: View {
     let copy: Copy
-    let showsInfo: Bool
-    let onInfo: () -> Void
     let onSettings: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack {
             Spacer()
-            if showsInfo {
-                GlassIconButton(systemImage: "info", label: copy.info, action: onInfo)
-                    .transition(.scale.combined(with: .opacity))
-            }
             GlassIconButton(systemImage: "gearshape", label: copy.settings, action: onSettings)
         }
     }
@@ -67,19 +56,27 @@ struct CornerButtons: View {
 struct DayLayout: View {
     let state: JourneyState
     let copy: Copy
+    let onInfo: () -> Void
     var revealOnAppear = true
 
     private var snapshot: DaySnapshot { state.snapshot(copy) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.section) {
-            RevealText(snapshot.text.sentence, revealOnAppear: revealOnAppear)
-                .font(Typeface.sentence)
-                .tracking(Typeface.tracking(for: 30))
-                .lineSpacing(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .id("\(state.rawValue)-\(snapshot.text.sentence)")
-                .transition(.opacity)
+            VStack(alignment: .leading, spacing: 12) {
+                RevealText(snapshot.text.sentence, revealOnAppear: revealOnAppear)
+                    .font(Typeface.sentence)
+                    .tracking(Typeface.tracking(for: 30))
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .id("\(state.rawValue)-\(snapshot.text.sentence)")
+                    .transition(.opacity)
+
+                if !snapshot.text.suggestions.isEmpty {
+                    GlassIconButton(systemImage: "info", label: copy.info, action: onInfo)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
 
             VStack(alignment: .leading, spacing: 16) {
                 OrbitHero(snapshot: snapshot)
