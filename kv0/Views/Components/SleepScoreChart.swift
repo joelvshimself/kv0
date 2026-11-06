@@ -3,6 +3,7 @@ import SwiftUI
 
 struct SleepScoreChart: View {
     let nights: [NightScore]
+    let note: String
     @Environment(\.copy) private var copy
 
     var body: some View {
@@ -19,7 +20,7 @@ struct SleepScoreChart: View {
                 }
 
                 Chart(nights) { night in
-                    BarMark(x: .value("Night", copy.weekdays[night.index]),
+                    BarMark(x: .value("Night", label(for: night)),
                             y: .value("Score", night.score), width: .ratio(0.42))
                         .foregroundStyle(color(for: night))
                         .clipShape(Capsule())
@@ -40,12 +41,23 @@ struct SleepScoreChart: View {
                 }
                 .frame(height: 110)
 
-                Text(copy.learningNote)
+                Text(note)
                     .font(Typeface.caption)
                     .foregroundStyle(Nova.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    private func label(for night: NightScore) -> String {
+        let weekday = Calendar.current.component(.weekday, from: night.wakeDay) - 1
+        if copy.weekdays.indices.contains(weekday) {
+            return copy.weekdays[weekday]
+        }
+        if copy.weekdays.indices.contains(night.index) {
+            return copy.weekdays[night.index]
+        }
+        return "—"
     }
 
     private func isLast(_ night: NightScore) -> Bool { night.id == nights.last?.id }

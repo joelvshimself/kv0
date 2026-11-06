@@ -22,6 +22,8 @@ struct Copy {
     let sleepScore: String
     let lastNights: String
     let learningNote: String
+    let healthNote: String
+    let estimatedNote: String
     let weekdays: [String]
     let hourUnit: String
     let minuteUnit: String
@@ -30,6 +32,14 @@ struct Copy {
     let settings: String
     let language: String
     let done: String
+    let liveMode: String
+    let connectHealth: String
+    let healthConnected: String
+    let healthUnavailable: String
+    let enableNotifications: String
+    let notificationsOn: String
+    let takeBreak: String
+    let sleepDebt: String
 
     func state(_ state: JourneyState) -> StateCopy {
         switch state {
@@ -42,6 +52,14 @@ struct Copy {
 
     func duration(_ minutes: Int) -> String {
         "\(minutes / 60)\(hourUnit) \(String(format: "%02d", minutes % 60))\(minuteUnit)"
+    }
+
+    func note(for key: SleepPredictionNote) -> String {
+        switch key {
+        case .learning: learningNote
+        case .fromHealth: healthNote
+        case .estimated: estimatedNote
+        }
     }
 }
 
@@ -84,20 +102,30 @@ extension Copy {
         ),
         now: "now",
         dip: "dip",
-        graphAccessibility: "Alertness through the day, with a dip at 15:00",
+        graphAccessibility: "Alertness through the day, with your predicted energy dip",
         sleepTime: "sleep time",
         journeyDuration: "journey duration",
         sleepScore: "sleep score",
         lastNights: "last 7 nights",
-        learningNote: "Based on 7 nights. Readings sharpen as kv0 learns your rhythm.",
-        weekdays: ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"],
+        learningNote: "Based on recent nights. Readings sharpen as kv0 learns your rhythm.",
+        healthNote: "Predicted from Apple Health like RISE: sleep need, debt, timing and efficiency.",
+        estimatedNote: "Estimated until Health is connected. Connect Health for a real sleep score.",
+        weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         hourUnit: "h",
         minuteUnit: "m",
         momentOfDay: "Moment of the day",
         info: "More about this moment",
         settings: "Settings",
         language: "Language",
-        done: "Done"
+        done: "Done",
+        liveMode: "Follow live day",
+        connectHealth: "Connect Apple Health",
+        healthConnected: "Health connected",
+        healthUnavailable: "Health not available on this device",
+        enableNotifications: "Enable wake & dip alerts",
+        notificationsOn: "Notifications on — morning wake + 30h before dip",
+        takeBreak: "I took a break",
+        sleepDebt: "sleep debt"
     )
 
     static let bahasa = Copy(
@@ -138,19 +166,29 @@ extension Copy {
         ),
         now: "sekarang",
         dip: "penurunan",
-        graphAccessibility: "Tingkat kewaspadaan sepanjang hari, dengan penurunan pada pukul 15:00",
+        graphAccessibility: "Tingkat kewaspadaan sepanjang hari, dengan penurunan energi yang diprediksi",
         sleepTime: "waktu tidur",
         journeyDuration: "durasi perjalanan",
         sleepScore: "skor tidur",
         lastNights: "7 malam terakhir",
-        learningNote: "Berdasarkan 7 malam. Hasilnya makin akurat saat kv0 mempelajari ritmemu.",
-        weekdays: ["Rab", "Kam", "Jum", "Sab", "Min", "Sen", "Sel"],
+        learningNote: "Berdasarkan malam terakhir. Hasilnya makin akurat saat kv0 mempelajari ritmemu.",
+        healthNote: "Diprediksi dari Apple Health seperti RISE: kebutuhan tidur, utang, waktu, dan efisiensi.",
+        estimatedNote: "Perkiraan sampai Health terhubung. Hubungkan Health untuk skor tidur nyata.",
+        weekdays: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
         hourUnit: "j",
         minuteUnit: "m",
         momentOfDay: "Momen hari ini",
         info: "Selengkapnya tentang momen ini",
         settings: "Pengaturan",
         language: "Bahasa",
-        done: "Selesai"
+        done: "Selesai",
+        liveMode: "Ikuti hari secara langsung",
+        connectHealth: "Hubungkan Apple Health",
+        healthConnected: "Health terhubung",
+        healthUnavailable: "Health tidak tersedia di perangkat ini",
+        enableNotifications: "Aktifkan peringatan bangun & penurunan",
+        notificationsOn: "Notifikasi aktif — bangun pagi + 30 jam sebelum penurunan",
+        takeBreak: "Sudah istirahat",
+        sleepDebt: "utang tidur"
     )
 }

@@ -7,54 +7,6 @@ enum JourneyState: String, CaseIterable, Identifiable {
     case finishWork
 
     var id: String { rawValue }
-
-    func snapshot(_ copy: Copy) -> DaySnapshot {
-        let text = copy.state(self)
-        let sleepMinutes = 7 * 60 + 20
-
-        switch self {
-        case .morning:
-            return DaySnapshot(
-                text: text,
-                heroValue: Double(sleepMinutes) / 60,
-                heroText: copy.duration(sleepMinutes),
-                orbitStyle: .rest,
-                sleepMinutes: sleepMinutes,
-                journeyMinutes: 35,
-                nowHour: 7.5
-            )
-        case .working:
-            return DaySnapshot(
-                text: text,
-                heroValue: 2.5,
-                heroText: "2.5",
-                orbitStyle: .energy,
-                sleepMinutes: sleepMinutes,
-                journeyMinutes: 35,
-                nowHour: 12.5
-            )
-        case .breakDue:
-            return DaySnapshot(
-                text: text,
-                heroValue: 2.7,
-                heroText: "2.7",
-                orbitStyle: .energy,
-                sleepMinutes: sleepMinutes,
-                journeyMinutes: 35,
-                nowHour: 14.3
-            )
-        case .finishWork:
-            return DaySnapshot(
-                text: text,
-                heroValue: 8,
-                heroText: "8",
-                orbitStyle: .energy,
-                sleepMinutes: sleepMinutes,
-                journeyMinutes: 70,
-                nowHour: 19.5
-            )
-        }
-    }
 }
 
 enum OrbitStyle {
@@ -73,35 +25,31 @@ struct DaySnapshot {
     /// Time spent driving to and from work today.
     let journeyMinutes: Int
     let nowHour: Double
-
-    let dipHour: Double = 15.0
-    let dayStart: Double = 6
-    let dayEnd: Double = 24
+    let dipHour: Double
+    let dayStart: Double
+    let dayEnd: Double
+    let alertness: [AlertnessPoint]
+    let nights: [NightScore]
 }
 
-struct AlertnessPoint: Identifiable {
+struct AlertnessPoint: Identifiable, Equatable {
     let hour: Double
     let level: Double
     var id: Double { hour }
 }
 
-struct NightScore: Identifiable {
+struct NightScore: Identifiable, Equatable {
     let index: Int
     let score: Int
+    var wakeDay: Date = .now
     var id: Int { index }
 }
 
 enum Rhythm {
-    /// Two-process style alertness: morning rise, post-lunch dip near 15:00, evening wane.
-    static let alertness: [AlertnessPoint] = stride(from: 6.0, through: 24.0, by: 0.25).map { h in
-        let circadian = 0.55 + 0.35 * sin((h - 9) / 24 * 2 * .pi)
-        let dip = 0.28 * exp(-pow(h - 15, 2) / 2.2)
-        let wake = 0.3 * exp(-(h - 6) / 1.2)
-        return AlertnessPoint(hour: h, level: max(0.05, circadian - dip - wake))
-    }
-
-    /// Oldest first; index lines up with `Copy.weekdays`.
-    static let nights: [NightScore] = [72, 80, 68, 85, 78, 82, 86].enumerated().map {
-        NightScore(index: $0.offset, score: $0.element)
-    }
+    /// Default two-process curve used before live circadian data is ready.
+    static let alertness: [AlertnessPoint] = CircadianEngine.build(
+        wakeTime: nil,
+        sleepNeedMinutes: SleepScorePredictor.defaultNeedMinutes,
+        sleepDebtMinutes: 0
+    ).alertness
 }

@@ -6,13 +6,17 @@ struct TimeGraphView: View {
     let snapshot: DaySnapshot
     @Environment(\.copy) private var copy
 
+    private var curve: [AlertnessPoint] {
+        snapshot.alertness.isEmpty ? Rhythm.alertness : snapshot.alertness
+    }
+
     private var dipLevel: Double {
-        Rhythm.alertness.min { abs($0.hour - snapshot.dipHour) < abs($1.hour - snapshot.dipHour) }?.level ?? 0
+        curve.min { abs($0.hour - snapshot.dipHour) < abs($1.hour - snapshot.dipHour) }?.level ?? 0
     }
 
     var body: some View {
         Chart {
-            ForEach(Rhythm.alertness) { point in
+            ForEach(curve) { point in
                 AreaMark(x: .value("Hour", point.hour), y: .value("Alertness", point.level))
                     .interpolationMethod(.catmullRom)
                     .foregroundStyle(

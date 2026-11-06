@@ -11,46 +11,70 @@
 		05E22EC6D9AC2BA6B0E016ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC0FD078867A719983DEFC07 /* Assets.xcassets */; };
 		06B5F408BFEE2AF466B3FD3B /* StarfieldBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61762F323B0E206C98E40E3F /* StarfieldBackground.swift */; };
 		072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */; };
+		197091DDDCF7D4C006E5E94D /* DayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757CDFF6EAC6CE0A63C4745B /* DayViewModel.swift */; };
 		2356576CB94F6E724C10B7E1 /* kv0App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E73E12E7A0C3E198A5BD83 /* kv0App.swift */; };
 		3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */; };
 		380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008724D48FFB6FD15F3565D5 /* DesignTokens.swift */; };
 		388D83660C2604359453E895 /* SpaceGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */; };
 		46AFDCA2BC8BBD2A043C0042 /* StatePickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E258F1F728C0A461B50CC630 /* StatePickerBar.swift */; };
 		4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1354329C3DB77DF41D0A085A /* JourneyState.swift */; };
+		60A8B617CF65ED4396E0782F /* CircadianEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA20A1D2FD73DF85756539E9 /* CircadianEngine.swift */; };
 		67E3C6A895EF06EC81B17DBB /* LanguageSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950FCC03872218433B3E0745 /* LanguageSheet.swift */; };
 		72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */; };
+		77B21C15896D897201A95032 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F7C0D0C7B43C90E9344EE0 /* HealthKit.framework */; };
 		841F288F8F3CB5DB1500ABED /* SleepScoreChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */; };
 		91BF47CBEB0BCAF554C5F8A6 /* InfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F579D8669EC1B30C3DD1F6E /* InfoSheet.swift */; };
+		AA5A8017B918A6465BCB5AFE /* SleepScorePredictor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EA395D12338F030B78FFBB /* SleepScorePredictor.swift */; };
 		B132623D48DC2BF9DC5D5D3E /* TimeGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */; };
+		B66560BEFD7FBAB6E68C74C5 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74231C2F3FCB43578DE922D0 /* NotificationScheduler.swift */; };
 		C88E9D1DE51BF2846016E8CE /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = DE3A098A423BD8B4EE2A251E /* OFL.txt */; };
 		D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D2994E0758B143A0AEDF43 /* RevealText.swift */; };
 		E4AA72B3F48B84D54335C9F5 /* GlassIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219FDEB3A38155F859B43FCE /* GlassIconButton.swift */; };
 		E8C8438E52F89F6510E65D38 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD34750674FE9426C6358C84 /* L10n.swift */; };
+		ED229CE2769DF79810343230 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDEC80EC15A4088CD1027D7 /* HealthKitService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008724D48FFB6FD15F3565D5 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
 		097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricColumnsView.swift; sourceTree = "<group>"; };
+		10146DD226468B35C6F72BBD /* kv0.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = kv0.entitlements; sourceTree = "<group>"; };
 		1354329C3DB77DF41D0A085A /* JourneyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyState.swift; sourceTree = "<group>"; };
 		1DF73B9B274B661CB3B545D3 /* SleepScoreChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScoreChart.swift; sourceTree = "<group>"; };
 		219FDEB3A38155F859B43FCE /* GlassIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassIconButton.swift; sourceTree = "<group>"; };
 		21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SpaceGrotesk.ttf; sourceTree = "<group>"; };
+		32F7C0D0C7B43C90E9344EE0 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		3F579D8669EC1B30C3DD1F6E /* InfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoSheet.swift; sourceTree = "<group>"; };
 		43E73E12E7A0C3E198A5BD83 /* kv0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kv0App.swift; sourceTree = "<group>"; };
+		5BDEC80EC15A4088CD1027D7 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		61762F323B0E206C98E40E3F /* StarfieldBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarfieldBackground.swift; sourceTree = "<group>"; };
 		6C66037691703FC87C33ED9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		73D01F0D6E4C02ED0B8E1A63 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		74231C2F3FCB43578DE922D0 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		757CDFF6EAC6CE0A63C4745B /* DayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewModel.swift; sourceTree = "<group>"; };
 		7AFC7AFB1A7DFAE37A47DFED /* OrbitHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitHero.swift; sourceTree = "<group>"; };
 		950FCC03872218433B3E0745 /* LanguageSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSheet.swift; sourceTree = "<group>"; };
 		98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeGraphView.swift; sourceTree = "<group>"; };
+		A0EA395D12338F030B78FFBB /* SleepScorePredictor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScorePredictor.swift; sourceTree = "<group>"; };
+		AA20A1D2FD73DF85756539E9 /* CircadianEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircadianEngine.swift; sourceTree = "<group>"; };
 		B2D2994E0758B143A0AEDF43 /* RevealText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealText.swift; sourceTree = "<group>"; };
 		BC0FD078867A719983DEFC07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		DB6C19C9CCEAD124C2CC98ED /* kv0.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = kv0.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB6C19C9CCEAD124C2CC98ED /* kv0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kv0.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE3A098A423BD8B4EE2A251E /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		E258F1F728C0A461B50CC630 /* StatePickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatePickerBar.swift; sourceTree = "<group>"; };
 		FBBDC8E627833363A9E75BB8 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		FD34750674FE9426C6358C84 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ECF4B906B747585DC3942C59 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77B21C15896D897201A95032 /* HealthKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		045A276213C13CA9D9CBF9DD /* Fonts */ = {
@@ -62,18 +86,40 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		0AB89F6D9B0175A3BBFD8988 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				757CDFF6EAC6CE0A63C4745B /* DayViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		13D8CC67B99F3613F7953A72 /* kv0 */ = {
 			isa = PBXGroup;
 			children = (
 				BC0FD078867A719983DEFC07 /* Assets.xcassets */,
 				6C66037691703FC87C33ED9A /* Info.plist */,
+				10146DD226468B35C6F72BBD /* kv0.entitlements */,
 				FB2D137F5C2688F1D33FBA8D /* App */,
 				DFA990F7DC7AF4224798A143 /* Models */,
 				F7DF3B3651E4F493B20C4396 /* Resources */,
+				41F8FFF6E6F160772D5D9403 /* Services */,
 				45DCB6A39FA2FC9E642FE2C8 /* Theme */,
+				0AB89F6D9B0175A3BBFD8988 /* ViewModels */,
 				ECF771016F4FD1514343C609 /* Views */,
 			);
 			path = kv0;
+			sourceTree = "<group>";
+		};
+		41F8FFF6E6F160772D5D9403 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA20A1D2FD73DF85756539E9 /* CircadianEngine.swift */,
+				5BDEC80EC15A4088CD1027D7 /* HealthKitService.swift */,
+				74231C2F3FCB43578DE922D0 /* NotificationScheduler.swift */,
+				A0EA395D12338F030B78FFBB /* SleepScorePredictor.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		45DCB6A39FA2FC9E642FE2C8 /* Theme */ = {
@@ -101,6 +147,14 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		83399BBC4EBF97FBC2E51DF5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				32F7C0D0C7B43C90E9344EE0 /* HealthKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9438E3E3D43E38A289BF856D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				13D8CC67B99F3613F7953A72 /* kv0 */,
+				83399BBC4EBF97FBC2E51DF5 /* Frameworks */,
 				9438E3E3D43E38A289BF856D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -161,6 +216,7 @@
 			buildPhases = (
 				112FE7124B67369B874C3E38 /* Sources */,
 				5BF8ABD7BC4526119EDB1578 /* Resources */,
+				ECF4B906B747585DC3942C59 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -184,6 +240,11 @@
 				TargetAttributes = {
 					067FE04B561386DB658DDCCC = {
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.HealthKit = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -225,17 +286,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				0092BD0E904B03F7CAA349C9 /* AppLanguage.swift in Sources */,
+				60A8B617CF65ED4396E0782F /* CircadianEngine.swift in Sources */,
 				72AF6215CA633AED02766CA7 /* ContentView.swift in Sources */,
+				197091DDDCF7D4C006E5E94D /* DayViewModel.swift in Sources */,
 				380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */,
 				E4AA72B3F48B84D54335C9F5 /* GlassIconButton.swift in Sources */,
+				ED229CE2769DF79810343230 /* HealthKitService.swift in Sources */,
 				91BF47CBEB0BCAF554C5F8A6 /* InfoSheet.swift in Sources */,
 				4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */,
 				E8C8438E52F89F6510E65D38 /* L10n.swift in Sources */,
 				67E3C6A895EF06EC81B17DBB /* LanguageSheet.swift in Sources */,
 				3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */,
+				B66560BEFD7FBAB6E68C74C5 /* NotificationScheduler.swift in Sources */,
 				072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */,
 				D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */,
 				841F288F8F3CB5DB1500ABED /* SleepScoreChart.swift in Sources */,
+				AA5A8017B918A6465BCB5AFE /* SleepScorePredictor.swift in Sources */,
 				06B5F408BFEE2AF466B3FD3B /* StarfieldBackground.swift in Sources */,
 				46AFDCA2BC8BBD2A043C0042 /* StatePickerBar.swift in Sources */,
 				B132623D48DC2BF9DC5D5D3E /* TimeGraphView.swift in Sources */,
@@ -251,8 +317,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = kv0/kv0.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XGNPHD78FR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kv0/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kv0;
@@ -396,8 +464,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = kv0/kv0.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XGNPHD78FR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = kv0/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kv0;

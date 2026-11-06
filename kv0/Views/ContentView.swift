@@ -1,65 +1,90 @@
 import SwiftUI
 
+private enum PresentedSheet: String, Identifiable {
+    case info
+    case settings
+
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
-    @State private var state: JourneyState = .working
-    @State private var showingInfo = false
-    @State private var showingLanguage = false
+    @State private var viewModel = DayViewModel()
+    @State private var presentedSheet: PresentedSheet?
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .english
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     private var copy: Copy { language.copy }
-    private var snapshot: DaySnapshot { state.snapshot(copy) }
+    private var snapshot: DaySnapshot { viewModel.snapshot(copy: copy) }
 
     var body: some View {
-        ScrollView {
-            DayLayout(state: state, copy: copy, onInfo: { showingInfo = true })
+        ZStack(alignment: .topTrailing) {
+            ScrollView {
+                DayLayout(
+                    state: viewModel.journeyState,
+                    snapshot: snapshot,
+                    note: copy.note(for: viewModel.prediction.noteKey),
+                    showBreakAction: viewModel.journeyState == .breakDue,
+                    onInfo: { presentedSheet = .info },
+                    onBreak: { viewModel.markBreakTaken() }
+                )
                 .padding(.horizontal, Space.margin)
+                .padding(.top, 52)
                 .padding(.bottom, 16)
-        }
-        .scrollIndicators(.hidden)
-        .safeAreaInset(edge: .top) {
-            CornerButtons(copy: copy, onSettings: { showingLanguage = true })
-            .padding(.horizontal, Space.margin)
+                .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: viewModel.journeyState)
+                .animation(.easeInOut(duration: 0.3), value: language)
+            }
+            .scrollIndicators(.hidden)
+
+            GlassIconButton(systemImage: "gearshape", label: copy.settings) {
+                presentedSheet = .settings
+            }
+            .padding(.trailing, Space.margin)
             .padding(.top, 4)
         }
         .safeAreaInset(edge: .bottom) {
-            StatePickerBar(selection: $state)
-                .padding(.horizontal, Space.margin)
-                .padding(.bottom, 8)
+            StatePickerBar(selection: Binding(
+                get: { viewModel.journeyState },
+                set: { viewModel.selectState($0) }
+            ))
+            .padding(.horizontal, Space.margin)
+            .padding(.bottom, 8)
         }
         .background(StarfieldBackground())
-        .sheet(isPresented: $showingInfo) {
-            InfoSheet(text: snapshot.text)
-        }
-        .sheet(isPresented: $showingLanguage) {
-            LanguageSheet(language: $language)
+        .sheet(item: $presentedSheet) { sheet in
+            switch sheet {
+            case .info:
+                InfoSheet(text: snapshot.text)
+            case .settings:
+                LanguageSheet(language: $language, viewModel: viewModel)
+            }
         }
         .environment(\.copy, copy)
         .preferredColorScheme(.dark)
-        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: state)
-        .animation(.easeInOut(duration: 0.3), value: language)
-    }
-}
-
-struct CornerButtons: View {
-    let copy: Copy
-    let onSettings: () -> Void
-
-    var body: some View {
-        HStack {
-            Spacer()
-            GlassIconButton(systemImage: "gearshape", label: copy.settings, action: onSettings)
+        .task(id: language) {
+            viewModel.start(language: language)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await viewModel.refresh() }
+            }
+        }
+        .onDisappear {
+            viewModel.stop()
         }
     }
 }
 
 struct DayLayout: View {
     let state: JourneyState
-    let copy: Copy
+    let snapshot: DaySnapshot
+    let note: String
+    var showBreakAction = false
     let onInfo: () -> Void
+    var onBreak: () -> Void = {}
     var revealOnAppear = true
 
-    private var snapshot: DaySnapshot { state.snapshot(copy) }
+    @Environment(\.copy) private var copy
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.section) {
@@ -72,9 +97,23 @@ struct DayLayout: View {
                     .id("\(state.rawValue)-\(snapshot.text.sentence)")
                     .transition(.opacity)
 
-                if !snapshot.text.suggestions.isEmpty {
-                    GlassIconButton(systemImage: "info", label: copy.info, action: onInfo)
-                        .transition(.scale.combined(with: .opacity))
+                HStack(spacing: 10) {
+                    if !snapshot.text.suggestions.isEmpty {
+                        GlassIconButton(systemImage: "info", label: copy.info, action: onInfo)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                    if showBreakAction {
+                        Button(action: onBreak) {
+                            Text(copy.takeBreak)
+                                .font(Typeface.caption.weight(.medium))
+                                .foregroundStyle(Nova.ember)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(Capsule().fill(Color.white.opacity(0.06)))
+                                .overlay(Capsule().strokeBorder(Nova.hairline, lineWidth: 1))
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
 
@@ -85,7 +124,7 @@ struct DayLayout: View {
 
             MetricColumnsView(snapshot: snapshot)
 
-            SleepScoreChart(nights: Rhythm.nights)
+            SleepScoreChart(nights: snapshot.nights, note: note)
         }
     }
 }
