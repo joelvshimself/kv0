@@ -18,6 +18,10 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>kv0 reads your sleep and heart rate to predict your sleep score and energy dip, like RISE.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>kv0 does not write health data; this key is required by HealthKit.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SpaceGrotesk.ttf</string>

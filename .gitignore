@@ -1,8 +1,44 @@
+# Backend
+backend/node_modules/
+backend/dist/
+backend/data/
+backend/.env
+backend/certs/
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
+# Data
+data/
+certs/
+
+# macOS
 .DS_Store
+
+# Xcode
+*.xcworkspace
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+*.xcuserdata
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+xcuserdata/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Build
 build/
 DerivedData/
-*.xcuserstate
-xcuserdata/
-*.xcscmblueprint
-.swiftpm/
-.env*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+.env
+*.tmp

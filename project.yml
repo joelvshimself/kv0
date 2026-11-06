@@ -15,6 +15,8 @@ targets:
     platform: iOS
     sources:
       - path: kv0
+    entitlements:
+      path: kv0/kv0.entitlements
     info:
       path: kv0/Info.plist
       properties:
@@ -22,6 +24,8 @@ targets:
           - SpaceGrotesk.ttf
         UILaunchScreen:
           UIColorName: ""
+        NSHealthShareUsageDescription: "kv0 reads your sleep and heart rate to predict your sleep score and energy dip, like RISE."
+        NSHealthUpdateUsageDescription: "kv0 does not write health data; this key is required by HealthKit."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kv0.app
@@ -33,3 +37,6 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: kv0/kv0.entitlements
+    dependencies:
+      - sdk: HealthKit.framework

@@ -14,6 +14,7 @@ struct GlassIconButton: View {
                 .foregroundStyle(Nova.bone)
                 .frame(width: 44, height: 44)
                 .modifier(GlassCircle())
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
@@ -23,7 +24,7 @@ struct GlassIconButton: View {
 private struct GlassCircle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26, macOS 26, *) {
-            content.glassEffect(.regular.interactive(), in: Circle())
+            content.glassEffect(.regular, in: Circle())
         } else {
             content
                 .background(Circle().fill(.ultraThinMaterial.opacity(0.5)))
