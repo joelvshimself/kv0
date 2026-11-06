@@ -18,6 +18,7 @@
 		3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097F95198A0EEC90D8E7045A /* MetricColumnsView.swift */; };
 		380BCFCCCA7BF428A59F5EDF /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008724D48FFB6FD15F3565D5 /* DesignTokens.swift */; };
 		388D83660C2604359453E895 /* SpaceGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21D79AF3E56CAD1EFD96C773 /* SpaceGrotesk.ttf */; };
+		3B4297E5DFBA4C300264AA88 /* NotificationVoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B071499D135D8EA5C64744CC /* NotificationVoice.swift */; };
 		4CC3B63C67DEC760FA3F2F0E /* DriveTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A0BE75B19669CB90C07270 /* DriveTracker.swift */; };
 		4D7CE40A5FC81B401FC06218 /* JourneyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1354329C3DB77DF41D0A085A /* JourneyState.swift */; };
 		5EFD1E76E1928D3C41396458 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120465FF9E3E6511737A3E58 /* NotificationManager.swift */; };
@@ -54,6 +55,7 @@
 		8B3E454C7A96E4B59CE279E6 /* SleepEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepEngine.swift; sourceTree = "<group>"; };
 		950FCC03872218433B3E0745 /* LanguageSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSheet.swift; sourceTree = "<group>"; };
 		98D09E0A11D1AAC705FAD967 /* TimeGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeGraphView.swift; sourceTree = "<group>"; };
+		B071499D135D8EA5C64744CC /* NotificationVoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationVoice.swift; sourceTree = "<group>"; };
 		B2D2994E0758B143A0AEDF43 /* RevealText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealText.swift; sourceTree = "<group>"; };
 		B7E398C540A55AE9004CFED5 /* TestSleep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSleep.swift; sourceTree = "<group>"; };
 		BC0FD078867A719983DEFC07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				C9A0BE75B19669CB90C07270 /* DriveTracker.swift */,
 				C198D25E663B8AEB64F138E5 /* HealthKitManager.swift */,
 				120465FF9E3E6511737A3E58 /* NotificationManager.swift */,
+				B071499D135D8EA5C64744CC /* NotificationVoice.swift */,
 				8B3E454C7A96E4B59CE279E6 /* SleepEngine.swift */,
 				B7E398C540A55AE9004CFED5 /* TestSleep.swift */,
 			);
@@ -268,6 +271,7 @@
 				67E3C6A895EF06EC81B17DBB /* LanguageSheet.swift in Sources */,
 				3723B9DEC667336EAF57F399 /* MetricColumnsView.swift in Sources */,
 				5EFD1E76E1928D3C41396458 /* NotificationManager.swift in Sources */,
+				3B4297E5DFBA4C300264AA88 /* NotificationVoice.swift in Sources */,
 				072F952B5B2D053EE5211F4C /* OrbitHero.swift in Sources */,
 				D2BC104BD44C1C922CC1AF84 /* RevealText.swift in Sources */,
 				FB054392A4793F30E220046F /* SettingsSheet.swift in Sources */,

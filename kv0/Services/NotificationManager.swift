@@ -21,6 +21,7 @@ final class NotificationManager: ObservableObject {
     static let enabledKey = "dipReminderEnabled"
     static let leadKey = "dipReminderLeadMinutes"
     static let leadOptions = [15, 30, 45, 60]
+    static let spokenKey = "notificationsReadAloud"
 
     /// Everything kv0 can say. Only `dipReminder` is scheduled for real so far; the rest
     /// are sent on demand from the test panel to try the wording with drivers.
@@ -42,7 +43,8 @@ final class NotificationManager: ObservableObject {
     private let dipReminderID = "kv0.dip-reminder"
 
     private init() {
-        UserDefaults.standard.register(defaults: [Self.enabledKey: true, Self.leadKey: 30])
+        UserDefaults.standard.register(defaults: [Self.enabledKey: true, Self.leadKey: 30,
+                                                  Self.spokenKey: true])
         center.delegate = presenter
     }
 
@@ -63,32 +65,62 @@ final class NotificationManager: ObservableObject {
 
     // MARK: Wording
 
-    func content(for kind: Kind, values: NotificationValues, copy: Copy) -> UNMutableNotificationContent {
+    struct Message {
+        let title: String
+        let body: String
+        /// The same words for the voice: durations spelled out, title and body as sentences.
+        let spoken: String
+    }
+
+    func message(for kind: Kind, values: NotificationValues, copy: Copy) -> Message {
         let time = values.dip.formatted(Date.FormatStyle(date: .omitted, time: .shortened).locale(copy.locale))
         let hours = { (h: Double) in h.formatted(.number.precision(.fractionLength(0...1)).locale(copy.locale)) }
 
-        let content = UNMutableNotificationContent()
-        switch kind {
-        case .sleepSummary:
-            content.title = String(format: copy.notifSleepTitle, copy.duration(values.sleepMinutes))
-            content.body = String(format: copy.notifSleepBody, values.score, time)
-        case .workStarted:
-            content.title = copy.notifWorkTitle
-            content.body = String(format: copy.notifWorkBody, hours(values.hoursToDip), time)
-        case .dipReminder:
-            content.title = copy.reminderTitle
-            content.body = String(format: copy.reminderBody, time)
-        case .longDrive:
-            content.title = copy.notifBreakTitle
-            content.body = copy.longDriveSentence
-        case .finishWork:
-            content.title = copy.notifDoneTitle
-            content.body = String(format: copy.notifDoneBody, copy.duration(values.drivenMinutes),
-                                  hours(values.goalHours))
+        func make(_ duration: (Int) -> String) -> (String, String) {
+            switch kind {
+            case .sleepSummary:
+                return (String(format: copy.notifSleepTitle, duration(values.sleepMinutes)),
+                        String(format: copy.notifSleepBody, values.score, time))
+            case .workStarted:
+                return (copy.notifWorkTitle, String(format: copy.notifWorkBody, hours(values.hoursToDip), time))
+            case .dipReminder:
+                return (copy.reminderTitle, String(format: copy.reminderBody, time))
+            case .longDrive:
+                return (copy.notifBreakTitle, copy.notifBreakBody)
+            case .finishWork:
+                return (copy.notifDoneTitle,
+                        String(format: copy.notifDoneBody, duration(values.drivenMinutes), hours(values.goalHours)))
+            }
         }
-        content.sound = .default
+
+        let (title, body) = make(copy.duration)
+        let (spokenTitle, spokenBody) = make(copy.spokenDuration)
+        return Message(title: title, body: body, spoken: "\(spokenTitle). \(spokenBody)")
+    }
+
+    var readsAloud: Bool { UserDefaults.standard.bool(forKey: Self.spokenKey) }
+
+    /// The notification as delivered: banner text, plus the message read aloud when that's on.
+    func content(for kind: Kind, values: NotificationValues, copy: Copy,
+                 requestID: String) async -> UNMutableNotificationContent {
+        let message = message(for: kind, values: values, copy: copy)
+        let content = UNMutableNotificationContent()
+        content.title = message.title
+        content.body = message.body
         content.threadIdentifier = "kv0"
+        content.sound = .default
+        if readsAloud,
+           let sound = await NotificationVoice.shared.record(message.spoken, language: copy.voiceLanguage,
+                                                            key: requestID) {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+        }
         return content
+    }
+
+    /// Plays a notification's voice now, from the test controls.
+    func preview(_ kind: Kind, values: NotificationValues, copy: Copy) {
+        NotificationVoice.shared.preview(message(for: kind, values: values, copy: copy).spoken,
+                                         language: copy.voiceLanguage)
     }
 
     // MARK: Real reminder
@@ -109,7 +141,7 @@ final class NotificationManager: ObservableObject {
         let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
         let request = UNNotificationRequest(
             identifier: dipReminderID,
-            content: content(for: .dipReminder, values: values, copy: copy),
+            content: await content(for: .dipReminder, values: values, copy: copy, requestID: dipReminderID),
             trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
         )
         do {
@@ -139,7 +171,7 @@ final class NotificationManager: ObservableObject {
         let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         let request = UNNotificationRequest(
             identifier: testID(kind),
-            content: content(for: kind, values: values, copy: copy),
+            content: await content(for: kind, values: values, copy: copy, requestID: testID(kind)),
             trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
         )
         do {

@@ -10,6 +10,7 @@ struct SettingsSheet: View {
     @EnvironmentObject private var notifications: NotificationManager
     @AppStorage(NotificationManager.enabledKey) private var remindersOn = true
     @AppStorage(NotificationManager.leadKey) private var leadMinutes = 30
+    @AppStorage(NotificationManager.spokenKey) private var readAloud = true
 
     private var prefs: SettingsCopy { copy.prefs }
 
@@ -42,6 +43,12 @@ struct SettingsSheet: View {
         }
         .onChange(of: leadMinutes) { _, _ in
             Task { await appState.rescheduleReminder() }
+        }
+        .onChange(of: readAloud) { _, _ in
+            Task {
+                await appState.rescheduleReminder()
+                await notifications.refreshTestContent(values: appState.notificationValues(), copy: copy)
+            }
         }
     }
 
@@ -267,6 +274,21 @@ struct SettingsSheet: View {
                             }
                         }
                     }
+
+                    Rectangle().fill(Nova.hairline).frame(height: 1)
+
+                    Toggle(isOn: $readAloud) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Label(prefs.readAloud, systemImage: "speaker.wave.2.fill")
+                                .font(Typeface.body.weight(.medium))
+                                .foregroundStyle(Nova.bone)
+                            Text(prefs.readAloudHint)
+                                .font(Typeface.caption)
+                                .foregroundStyle(Nova.bone.opacity(0.6))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .tint(Nova.orange)
 
                     if notifications.status == .denied {
                         HStack(spacing: 10) {

@@ -193,7 +193,7 @@ struct TestControlsSheet: View {
                         .foregroundStyle(Nova.ember)
                     }
                 } else {
-                    Text("Pick a time, then lock the phone or switch to the Gojek app. Each one arrives as a real notification.")
+                    Text("Pick a time, then lock the phone or switch to the Gojek app. Each one arrives as a real notification, read aloud unless Read aloud is off in Settings or the phone is on silent. The speaker plays it now.")
                         .font(Typeface.caption)
                         .foregroundStyle(Nova.bone.opacity(0.6))
                         .fixedSize(horizontal: false, vertical: true)
@@ -208,7 +208,7 @@ struct TestControlsSheet: View {
     }
 
     private func notificationRow(_ kind: NotificationManager.Kind) -> some View {
-        let preview = notifications.content(for: kind, values: appState.notificationValues(), copy: copy)
+        let preview = notifications.message(for: kind, values: appState.notificationValues(), copy: copy)
         let due = notifications.scheduledTests[kind]
 
         return VStack(alignment: .leading, spacing: 10) {
@@ -247,6 +247,13 @@ struct TestControlsSheet: View {
                         .foregroundStyle(Nova.muted)
                 }
                 Spacer()
+                Button {
+                    notifications.preview(kind, values: appState.notificationValues(), copy: copy)
+                } label: {
+                    Image(systemName: "speaker.wave.2.fill")
+                }
+                .buttonStyle(PillButtonStyle(prominent: false))
+                .accessibilityLabel("Hear it")
                 Button(due == nil ? "Schedule" : "Cancel") {
                     Task { await toggle(kind) }
                 }

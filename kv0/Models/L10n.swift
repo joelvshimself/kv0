@@ -48,6 +48,8 @@ struct SettingsCopy {
     let nextReminder: String
     let noReminderToday: String
     let notificationsOff: String
+    let readAloud: String
+    let readAloudHint: String
     let openSettings: String
     let privacy: String
 }
@@ -75,6 +77,11 @@ struct Copy {
     let sampleNote: String
     let sampleBanner: String
     let localeIdentifier: String
+    /// Voice that reads notifications aloud.
+    let voiceLanguage: String
+    /// Units spelled out for speech, singular then plural ("hour", "hours").
+    let spokenHour: (String, String)
+    let spokenMinute: (String, String)
     let hourUnit: String
     let minuteUnit: String
     let info: String
@@ -92,6 +99,7 @@ struct Copy {
     /// Takes hours to the dip, then the dip time.
     let notifWorkBody: String
     let notifBreakTitle: String
+    let notifBreakBody: String
     let notifDoneTitle: String
     /// Takes time driven, then tonight's sleep goal in hours.
     let notifDoneBody: String
@@ -106,6 +114,15 @@ struct Copy {
         case .breakDue: breakDue
         case .finishWork: finishWork
         }
+    }
+
+    /// "7 hours 20 minutes" rather than "7h 20m", which a voice would read letter by letter.
+    func spokenDuration(_ minutes: Int) -> String {
+        let h = minutes / 60, m = minutes % 60
+        let hours = "\(h) \(h == 1 ? spokenHour.0 : spokenHour.1)"
+        let mins = "\(m) \(m == 1 ? spokenMinute.0 : spokenMinute.1)"
+        if h == 0 { return mins }
+        return m == 0 ? hours : "\(hours) \(mins)"
     }
 
     func duration(_ minutes: Int) -> String {
@@ -169,21 +186,25 @@ extension Copy {
         sampleNote: "Sample week. Your own nights appear once Apple Health has sleep to share.",
         sampleBanner: "Sample data. Connect Apple Health to see your own sleep.",
         localeIdentifier: "en",
+        voiceLanguage: "en-US",
+        spokenHour: ("hour", "hours"),
+        spokenMinute: ("minute", "minutes"),
         hourUnit: "h",
         minuteUnit: "m",
         info: "More about this moment",
         settings: "Settings",
         language: "Language",
         done: "Done",
-        reminderTitle: "Your dip is coming",
-        reminderBody: "Predicted around %@. A good moment to step away.",
-        notifSleepTitle: "You slept %@",
-        notifSleepBody: "Sleep score %d. Your dip is around %@ today.",
-        notifWorkTitle: "Workday started",
-        notifWorkBody: "Your dip is in %@ hours, around %@.",
-        notifBreakTitle: "Time for a break",
-        notifDoneTitle: "Done for today",
-        notifDoneBody: "You drove %@ today. Aim for %@ hours of sleep tonight.",
+        reminderTitle: "You've been working hard",
+        reminderBody: "Your energy dips around %@. A short break now will help. You've earned it.",
+        notifSleepTitle: "Good morning. You slept %@",
+        notifSleepBody: "Sleep score %d. Thank you for looking after yourself. Your energy should hold until about %@.",
+        notifWorkTitle: "Thank you for getting out there",
+        notifWorkBody: "Your energy should hold for about %@ hours, until around %@. Stay safe on the road.",
+        notifBreakTitle: "Two hours on the road. Well done",
+        notifBreakBody: "You've earned a rest. Pull over for fifteen minutes.",
+        notifDoneTitle: "Thank you for today",
+        notifDoneBody: "You drove %@ and saw the day through. Aim for %@ hours of sleep tonight. Rest well.",
         prefs: SettingsCopy(
             health: "Apple Health",
             healthConnected: "Reading your sleep",
@@ -218,6 +239,8 @@ extension Copy {
             nextReminder: "Next reminder at %@",
             noReminderToday: "No more reminders today",
             notificationsOff: "Notifications are off for kv0.",
+            readAloud: "Read aloud",
+            readAloudHint: "Hear reminders in the app's language, without looking at the phone. Not heard when the phone is on silent.",
             openSettings: "Open iOS Settings",
             privacy: "Your sleep is read from Apple Health and stays on this iPhone."
         )
@@ -272,21 +295,25 @@ extension Copy {
         sampleNote: "Contoh minggu. Malam-malammu muncul setelah Apple Health punya data tidur.",
         sampleBanner: "Data contoh. Hubungkan Apple Health untuk melihat tidurmu.",
         localeIdentifier: "id",
+        voiceLanguage: "id-ID",
+        spokenHour: ("jam", "jam"),
+        spokenMinute: ("menit", "menit"),
         hourUnit: "j",
         minuteUnit: "m",
         info: "Selengkapnya tentang momen ini",
         settings: "Pengaturan",
         language: "Bahasa",
         done: "Selesai",
-        reminderTitle: "Energimu akan turun",
-        reminderBody: "Diperkirakan sekitar pukul %@. Saat yang tepat untuk rehat sejenak.",
-        notifSleepTitle: "Kamu tidur %@",
-        notifSleepBody: "Skor tidur %d. Energimu diperkirakan turun sekitar pukul %@.",
-        notifWorkTitle: "Mulai narik",
-        notifWorkBody: "Energimu turun %@ jam lagi, sekitar pukul %@.",
-        notifBreakTitle: "Waktunya istirahat",
-        notifDoneTitle: "Selesai untuk hari ini",
-        notifDoneBody: "Hari ini kamu menyetir %@. Targetkan tidur %@ jam malam ini.",
+        reminderTitle: "Kamu sudah bekerja keras",
+        reminderBody: "Energimu mulai turun sekitar pukul %@. Istirahat sebentar sekarang akan membantu. Kamu pantas mendapatkannya.",
+        notifSleepTitle: "Selamat pagi. Kamu tidur %@",
+        notifSleepBody: "Skor tidur %d. Terima kasih sudah menjaga diri. Energimu diperkirakan tetap baik sampai sekitar pukul %@.",
+        notifWorkTitle: "Terima kasih sudah mulai narik",
+        notifWorkBody: "Energimu diperkirakan tetap baik sekitar %@ jam lagi, sampai sekitar pukul %@. Hati-hati di jalan.",
+        notifBreakTitle: "Dua jam di jalan. Hebat",
+        notifBreakBody: "Kamu pantas istirahat. Menepilah selama lima belas menit.",
+        notifDoneTitle: "Terima kasih untuk hari ini",
+        notifDoneBody: "Hari ini kamu menyetir %@ dan menuntaskan harimu. Targetkan tidur %@ jam malam ini. Selamat beristirahat.",
         prefs: SettingsCopy(
             health: "Apple Health",
             healthConnected: "Membaca data tidurmu",
@@ -321,6 +348,8 @@ extension Copy {
             nextReminder: "Pengingat berikutnya pukul %@",
             noReminderToday: "Tidak ada pengingat lagi hari ini",
             notificationsOff: "Notifikasi kv0 dimatikan.",
+            readAloud: "Bacakan",
+            readAloudHint: "Dengar pengingat dalam bahasa aplikasi, tanpa melihat HP. Tidak terdengar saat HP dalam mode senyap.",
             openSettings: "Buka Pengaturan iOS",
             privacy: "Data tidurmu dibaca dari Apple Health dan tetap di iPhone ini."
         )
