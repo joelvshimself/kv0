@@ -369,7 +369,7 @@ struct SettingsSheet: View {
 
 // MARK: Pieces
 
-private struct IconBadge: View {
+struct IconBadge: View {
     let systemImage: String
 
     var body: some View {
@@ -382,7 +382,7 @@ private struct IconBadge: View {
     }
 }
 
-private struct StatusDot: View {
+struct StatusDot: View {
     let isOn: Bool
 
     var body: some View {
@@ -425,7 +425,7 @@ private struct StatDivider: View {
     }
 }
 
-private struct Chip: View {
+struct Chip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
@@ -445,7 +445,7 @@ private struct Chip: View {
     }
 }
 
-private struct PillButtonStyle: ButtonStyle {
+struct PillButtonStyle: ButtonStyle {
     let prominent: Bool
     @Environment(\.isEnabled) private var isEnabled
 

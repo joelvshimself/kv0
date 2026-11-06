@@ -84,6 +84,17 @@ struct Copy {
     let reminderTitle: String
     /// Takes the dip time.
     let reminderBody: String
+    /// Takes last night's sleep duration.
+    let notifSleepTitle: String
+    /// Takes the score, then the dip time.
+    let notifSleepBody: String
+    let notifWorkTitle: String
+    /// Takes hours to the dip, then the dip time.
+    let notifWorkBody: String
+    let notifBreakTitle: String
+    let notifDoneTitle: String
+    /// Takes time driven, then tonight's sleep goal in hours.
+    let notifDoneBody: String
     let prefs: SettingsCopy
 
     var locale: Locale { Locale(identifier: localeIdentifier) }
@@ -166,6 +177,13 @@ extension Copy {
         done: "Done",
         reminderTitle: "Your dip is coming",
         reminderBody: "Predicted around %@. A good moment to step away.",
+        notifSleepTitle: "You slept %@",
+        notifSleepBody: "Sleep score %d. Your dip is around %@ today.",
+        notifWorkTitle: "Workday started",
+        notifWorkBody: "Your dip is in %@ hours, around %@.",
+        notifBreakTitle: "Time for a break",
+        notifDoneTitle: "Done for today",
+        notifDoneBody: "You drove %@ today. Aim for %@ hours of sleep tonight.",
         prefs: SettingsCopy(
             health: "Apple Health",
             healthConnected: "Reading your sleep",
@@ -261,7 +279,14 @@ extension Copy {
         language: "Bahasa",
         done: "Selesai",
         reminderTitle: "Energimu akan turun",
-        reminderBody: "Diperkirakan sekitar %@. Saat yang tepat untuk rehat sejenak.",
+        reminderBody: "Diperkirakan sekitar pukul %@. Saat yang tepat untuk rehat sejenak.",
+        notifSleepTitle: "Kamu tidur %@",
+        notifSleepBody: "Skor tidur %d. Energimu diperkirakan turun sekitar pukul %@.",
+        notifWorkTitle: "Mulai narik",
+        notifWorkBody: "Energimu turun %@ jam lagi, sekitar pukul %@.",
+        notifBreakTitle: "Waktunya istirahat",
+        notifDoneTitle: "Selesai untuk hari ini",
+        notifDoneBody: "Hari ini kamu menyetir %@. Targetkan tidur %@ jam malam ini.",
         prefs: SettingsCopy(
             health: "Apple Health",
             healthConnected: "Membaca data tidurmu",

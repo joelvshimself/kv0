@@ -21,6 +21,9 @@ final class AppState: ObservableObject {
     @Published private(set) var lastUpdated: Date?
     @Published private(set) var driveDay: DriveDay?
     @Published private(set) var driveStatus: DriveTracker.Status = .notDetermined
+    /// Facilitator overrides from the hidden test controls.
+    @Published private(set) var testSleep = TestSleep.load()
+    @Published private(set) var momentOverride = TestSleep.loadMoment()
 
     private let health = HealthKitManager.shared
     private let notifications = NotificationManager.shared
@@ -50,6 +53,14 @@ final class AppState: ObservableObject {
     }
 
     func refresh() async {
+        if testSleep.isOn {
+            model = SleepEngine.model(from: testSleep.nights())
+            healthStatus = .connected
+            lastUpdated = Date()
+            await refreshDrives()
+            await rescheduleReminder()
+            return
+        }
         guard health.isAvailable else {
             healthStatus = .unavailable
             model = nil
@@ -72,6 +83,23 @@ final class AppState: ObservableObject {
         lastUpdated = Date()
         await refreshDrives()
         await rescheduleReminder()
+    }
+
+    // MARK: Test controls
+
+    /// Runs the app on sleep the facilitator typed in, and rewrites any test notifications
+    /// already scheduled so their numbers match.
+    func setTestSleep(_ value: TestSleep) async {
+        guard value != testSleep else { return }
+        testSleep = value
+        value.save()
+        await refresh()
+        await notifications.refreshTestContent(values: notificationValues(), copy: storedLanguage.copy)
+    }
+
+    func setMomentOverride(_ state: JourneyState?) {
+        momentOverride = state
+        TestSleep.saveMoment(state)
     }
 
     // MARK: Driving
@@ -136,6 +164,7 @@ final class AppState: ObservableObject {
     /// starts the workday, and an hour parked in the evening ends it. Without motion
     /// access it falls back to the clock.
     func liveState(now: Date = Date()) -> JourneyState {
+        if let momentOverride { return momentOverride }
         let clock = Calendar.current.component(.hour, from: now)
         let toDip = model.map { $0.dipHour - $0.hour(of: now) }
         let dipClose = toDip.map { $0 > 0 && $0 <= 1.5 } ?? false
@@ -201,6 +230,25 @@ final class AppState: ObservableObject {
             dayEnd: model.dayEnd,
             alertnessCurve: model.curve
         )
+    }
+
+    /// Real numbers for notification wording where kv0 has them, sample ones elsewhere.
+    func notificationValues(now: Date = Date()) -> NotificationValues {
+        var values = NotificationValues()
+        if let model {
+            values.sleepMinutes = model.lastNight.night.asleepMinutes
+            values.score = model.lastNight.score
+            // A dip that has passed would read "in 0 hours"; keep the sample one then.
+            if model.dipDate > now {
+                values.dip = model.dipDate
+                values.hoursToDip = ((model.dipHour - model.hour(of: now)) * 10).rounded() / 10
+            }
+            values.goalHours = model.tonightGoalHours
+        }
+        if drivingKnown, let minutes = driveDay?.minutes, minutes > 0 {
+            values.drivenMinutes = minutes
+        }
+        return values
     }
 
     var nightScores: [NightScore] {

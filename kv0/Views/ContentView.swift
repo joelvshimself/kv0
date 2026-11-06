@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var showingInfo = false
     @State private var showingSettings = false
+    @State private var showingTestControls = false
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .english
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
@@ -38,7 +39,8 @@ struct ContentView: View {
         .scrollIndicators(.hidden)
         .safeAreaInset(edge: .top) {
             CornerButtons(copy: copy, showsStatus: !appState.isLoading,
-                          onSettings: { showingSettings = true })
+                          onSettings: { showingSettings = true },
+                          onTestControls: { showingTestControls = true })
                 .padding(.horizontal, Space.margin)
                 .padding(.top, 4)
         }
@@ -48,6 +50,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingSettings) {
             SettingsSheet(language: $language)
+        }
+        .sheet(isPresented: $showingTestControls) {
+            TestControlsSheet()
         }
         .environment(\.copy, copy)
         .preferredColorScheme(.dark)
@@ -71,7 +76,11 @@ struct ContentView: View {
             }
         }
         .onChange(of: language) { _, _ in
-            Task { await appState.rescheduleReminder() }
+            Task {
+                await appState.rescheduleReminder()
+                await NotificationManager.shared.refreshTestContent(
+                    values: appState.notificationValues(), copy: copy)
+            }
         }
     }
 }
@@ -80,6 +89,7 @@ struct CornerButtons: View {
     let copy: Copy
     var showsStatus = true
     let onSettings: () -> Void
+    var onTestControls: () -> Void = {}
 
     var body: some View {
         HStack {
@@ -88,6 +98,11 @@ struct CornerButtons: View {
                     MomentPill(now: context.date)
                 }
                 .transition(.opacity)
+                // The facilitator's way into the test controls. Nothing on screen hints at it.
+                .onLongPressGesture(minimumDuration: 1) {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    onTestControls()
+                }
             }
             Spacer()
             GlassIconButton(systemImage: "gearshape", label: copy.settings, action: onSettings)
