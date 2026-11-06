@@ -30,6 +30,38 @@ struct DaySnapshot {
     let dayEnd: Double
     let alertness: [AlertnessPoint]
     let nights: [NightScore]
+    /// Curve supplied by the backend predictor when the on-device curve is absent.
+    var alertnessCurve: [AlertnessPoint]?
+
+    init(
+        text: StateCopy,
+        heroValue: Double,
+        heroText: String,
+        orbitStyle: OrbitStyle,
+        sleepMinutes: Int,
+        journeyMinutes: Int,
+        nowHour: Double,
+        dipHour: Double,
+        dayStart: Double,
+        dayEnd: Double,
+        alertness: [AlertnessPoint] = [],
+        nights: [NightScore] = [],
+        alertnessCurve: [AlertnessPoint]? = nil
+    ) {
+        self.text = text
+        self.heroValue = heroValue
+        self.heroText = heroText
+        self.orbitStyle = orbitStyle
+        self.sleepMinutes = sleepMinutes
+        self.journeyMinutes = journeyMinutes
+        self.nowHour = nowHour
+        self.dipHour = dipHour
+        self.dayStart = dayStart
+        self.dayEnd = dayEnd
+        self.alertness = alertness.isEmpty ? (alertnessCurve ?? []) : alertness
+        self.nights = nights
+        self.alertnessCurve = alertnessCurve
+    }
 }
 
 struct AlertnessPoint: Identifiable, Equatable {

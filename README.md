@@ -34,16 +34,18 @@ xcodegen generate
 open kv0.xcodeproj
 ```
 
+## Backend
+
+An optional Node.js service for persistence, analysis, and push scheduling lives in
+`backend/`. Start it with Docker:
+
+```sh
+docker-compose up -d
+curl http://localhost:3000/api/health
+```
+
+Production setup is in [DEPLOYMENT.md](DEPLOYMENT.md). API details are in
+[backend/README.md](backend/README.md).
+
 Design tokens and principles live in [DESIGN.md](DESIGN.md). Space Grotesk is bundled
 under the SIL Open Font License (`kv0/Resources/Fonts/OFL.txt`).
-
-## Cursor Cloud Agents / GitHub App
-
-If Cloud Agents fail with `ERROR_GITHUB_APP_NO_ACCESS`, install the **Cursor GitHub App**
-on this repository (`joelvshimself/kv0`):
-
-1. [Cursor GitHub integration](https://cursor.com/dashboard) → connect GitHub, or
-2. [GitHub → Applications → Cursor](https://github.com/settings/installations) →
-   configure → grant access to `kv0` (or all repos).
-
-Local branches (including `diod`) do not need the GitHub App; only Cloud Agents do.
