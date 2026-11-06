@@ -18,6 +18,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SpaceGrotesk.ttf</string>
@@ -27,9 +29,5 @@
 		<key>UIColorName</key>
 		<string></string>
 	</dict>
-	<key>NSHealthShareUsageDescription</key>
-	<string>kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>kv0 needs access to your health data to track your sleep patterns.</string>
 </dict>
 </plist>

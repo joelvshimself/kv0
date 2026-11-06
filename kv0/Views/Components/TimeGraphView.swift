@@ -58,7 +58,8 @@ struct TimeGraphView: View {
         .chartPlotStyle { $0.padding(.bottom, 22) }
         .chartYAxis(.hidden)
         .chartXAxis {
-            AxisMarks(values: [6, 9, 12, 15, 18, 21, 24]) { value in
+            AxisMarks(values: Array(stride(from: (snapshot.dayStart / 3).rounded(.up) * 3,
+                                           through: snapshot.dayEnd, by: 3))) { value in
                 AxisValueLabel {
                     if let hour = value.as(Double.self) {
                         Text(String(format: "%02.0f", hour.truncatingRemainder(dividingBy: 24)))
@@ -69,6 +70,6 @@ struct TimeGraphView: View {
             }
         }
         .frame(height: 140)
-        .accessibilityLabel(copy.graphAccessibility)
+        .accessibilityLabel(String(format: copy.graphAccessibility, copy.clock(snapshot.dipHour)))
     }
 }

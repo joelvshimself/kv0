@@ -22,6 +22,7 @@ targets:
           - SpaceGrotesk.ttf
         UILaunchScreen:
           UIColorName: ""
+        NSHealthShareUsageDescription: kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kv0.app

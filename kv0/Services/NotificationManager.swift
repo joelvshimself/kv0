@@ -1,108 +1,68 @@
 import Foundation
 import UserNotifications
-import UIKit
 
-class NotificationManager: NSObject, ObservableObject {
+/// Local reminders only. The dip is predicted on the device, so the reminder is scheduled
+/// here too; no push server or device token is involved.
+@MainActor
+final class NotificationManager: ObservableObject {
     static let shared = NotificationManager()
-    
-    @Published var isAuthorized = false
-    @Published var deviceToken: String?
-    
-    private override init() {
-        super.init()
+
+    static let enabledKey = "dipReminderEnabled"
+    static let leadKey = "dipReminderLeadMinutes"
+    static let leadOptions = [15, 30, 45, 60]
+
+    @Published private(set) var status: UNAuthorizationStatus = .notDetermined
+    @Published private(set) var nextReminder: Date?
+
+    private let center = UNUserNotificationCenter.current()
+    private let dipReminderID = "kv0.dip-reminder"
+
+    private init() {
+        UserDefaults.standard.register(defaults: [Self.enabledKey: true, Self.leadKey: 30])
     }
-    
-    func requestAuthorization() async throws {
-        let center = UNUserNotificationCenter.current()
-        
-        let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
-        
-        await MainActor.run {
-            self.isAuthorized = granted
-        }
-        
-        if granted {
-            await registerForRemoteNotifications()
-        }
+
+    var isEnabled: Bool { UserDefaults.standard.bool(forKey: Self.enabledKey) }
+    var leadMinutes: Int { UserDefaults.standard.integer(forKey: Self.leadKey) }
+
+    func refreshStatus() async {
+        status = await center.notificationSettings().authorizationStatus
     }
-    
-    @MainActor
-    private func registerForRemoteNotifications() async {
-        UIApplication.shared.registerForRemoteNotifications()
+
+    @discardableResult
+    func requestAuthorization() async -> Bool {
+        let granted = (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+        await refreshStatus()
+        return granted
     }
-    
-    func handleDeviceToken(_ deviceToken: Data) {
-        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        self.deviceToken = tokenString
-        
-        Task {
-            await DataSyncManager.shared.setDeviceToken(tokenString)
-        }
-    }
-    
-    func scheduleLocalWakeUpNotification(at date: Date, sleepScore: Int) {
+
+    /// Replaces any pending dip reminder with one `leadMinutes` before `dip`, if that moment
+    /// is still ahead and reminders are on.
+    func scheduleDipReminder(dip: Date?, copy: Copy) async {
+        center.removePendingNotificationRequests(withIdentifiers: [dipReminderID])
+        nextReminder = nil
+        await refreshStatus()
+
+        guard isEnabled, let dip,
+              status == .authorized || status == .provisional else { return }
+        let fireDate = dip.addingTimeInterval(-Double(leadMinutes) * 60)
+        guard fireDate > Date() else { return }
+
         let content = UNMutableNotificationContent()
-        content.title = "Good morning! ☀️"
-        content.body = "Your sleep score: \(sleepScore)/100. \(getSleepScoreMessage(sleepScore))"
+        content.title = copy.reminderTitle
+        content.body = String(format: copy.reminderBody, dip.formatted(date: .omitted, time: .shortened))
         content.sound = .default
-        content.badge = 1
-        
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        
+
+        let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
         let request = UNNotificationRequest(
-            identifier: "wake_up_\(date.timeIntervalSince1970)",
+            identifier: dipReminderID,
             content: content,
-            trigger: trigger
+            trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
         )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Failed to schedule wake-up notification: \(error)")
-            }
+        do {
+            try await center.add(request)
+            nextReminder = fireDate
+        } catch {
+            print("Could not schedule dip reminder: \(error)")
         }
-    }
-    
-    func scheduleLocalPreDipNotification(at date: Date, dipTime: Date) {
-        let content = UNMutableNotificationContent()
-        content.title = "Energy dip approaching"
-        
-        let timeFormatter = DateFormatter()
-        timeFormatter.timeStyle = .short
-        let dipTimeStr = timeFormatter.string(from: dipTime)
-        
-        content.body = "Your energy dip is predicted at \(dipTimeStr). Consider taking a break soon."
-        content.sound = .default
-        content.badge = 1
-        
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        
-        let request = UNNotificationRequest(
-            identifier: "pre_dip_\(date.timeIntervalSince1970)",
-            content: content,
-            trigger: trigger
-        )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Failed to schedule pre-dip notification: \(error)")
-            }
-        }
-    }
-    
-    private func getSleepScoreMessage(_ score: Int) -> String {
-        if score >= 85 { return "Excellent rest! Ready for a productive day." }
-        if score >= 70 { return "Good sleep. You should feel refreshed." }
-        if score >= 55 { return "Fair sleep. Consider an earlier bedtime tonight." }
-        return "Poor sleep. Prioritize recovery today."
-    }
-    
-    func clearAllNotifications() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UIApplication.shared.applicationIconBadgeNumber = 0
     }
 }

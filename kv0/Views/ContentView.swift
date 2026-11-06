@@ -6,74 +6,72 @@ struct ContentView: View {
     @State private var showingSettings = false
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .english
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @EnvironmentObject var appState: AppState
+    @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject private var appState: AppState
 
     private var copy: Copy { language.copy }
-    private var snapshot: DaySnapshot {
-        appState.currentSnapshot ?? state.snapshot(copy)
-    }
 
     var body: some View {
-        ZStack {
-            ScrollView {
-                if appState.isLoading {
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .tint(Nova.orange)
-                        Text("Loading your data...")
-                            .font(Typeface.body)
-                            .foregroundStyle(Nova.bone.opacity(0.7))
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top, 100)
-                } else {
-                    DayLayout(state: state, copy: copy, onInfo: { showingInfo = true })
-                        .padding(.horizontal, Space.margin)
-                        .padding(.bottom, 16)
+        ScrollView {
+            if appState.isLoading {
+                ProgressView()
+                    .tint(Nova.orange)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 240)
+            } else {
+                // Re-render each minute so the countdown to the dip and the "now" line move.
+                TimelineView(.periodic(from: .now, by: 60)) { context in
+                    DayLayout(
+                        state: state,
+                        snapshot: appState.snapshot(for: state, copy: copy, now: context.date),
+                        nights: appState.nightScores,
+                        isSample: appState.isSample,
+                        onInfo: { showingInfo = true },
+                        onConnect: { showingSettings = true }
+                    )
                 }
+                .padding(.horizontal, Space.margin)
+                .padding(.bottom, 16)
             }
-            .scrollIndicators(.hidden)
-            .safeAreaInset(edge: .top) {
-                CornerButtons(copy: copy, onSettings: { showingSettings = true })
+        }
+        .scrollIndicators(.hidden)
+        .safeAreaInset(edge: .top) {
+            CornerButtons(copy: copy, onSettings: { showingSettings = true })
                 .padding(.horizontal, Space.margin)
                 .padding(.top, 4)
+        }
+        .safeAreaInset(edge: .bottom) {
+            StatePickerBar(selection: $state)
+                .padding(.horizontal, Space.margin)
+                .padding(.bottom, 8)
+        }
+        .background(StarfieldBackground())
+        .sheet(isPresented: $showingInfo) {
+            InfoSheet(text: appState.snapshot(for: state, copy: copy).text)
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet(language: $language)
+        }
+        .environment(\.copy, copy)
+        .preferredColorScheme(.dark)
+        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: state)
+        .animation(.easeInOut(duration: 0.3), value: language)
+        .refreshable {
+            await appState.refresh()
+        }
+        .task {
+            await appState.start()
+            state = appState.liveState()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active, !appState.isLoading else { return }
+            Task {
+                await appState.refresh()
+                state = appState.liveState()
             }
-            .safeAreaInset(edge: .bottom) {
-                StatePickerBar(selection: $state)
-                    .padding(.horizontal, Space.margin)
-                    .padding(.bottom, 8)
-            }
-            .background(StarfieldBackground())
-            .sheet(isPresented: $showingInfo) {
-                InfoSheet(text: snapshot.text)
-            }
-            .sheet(isPresented: $showingSettings) {
-                SettingsSheet(language: $language)
-            }
-            .environment(\.copy, copy)
-            .preferredColorScheme(.dark)
-            .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: state)
-            .animation(.easeInOut(duration: 0.3), value: language)
-            .refreshable {
-                await appState.refreshData()
-            }
-            
-            if let error = appState.errorMessage {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(Nova.orange)
-                        Text(error)
-                            .font(Typeface.caption)
-                            .foregroundStyle(Nova.bone)
-                    }
-                    .padding()
-                    .background(Nova.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding()
-                }
-            }
+        }
+        .onChange(of: language) { _, _ in
+            Task { await appState.rescheduleReminder() }
         }
     }
 }
@@ -92,11 +90,13 @@ struct CornerButtons: View {
 
 struct DayLayout: View {
     let state: JourneyState
-    let copy: Copy
+    let snapshot: DaySnapshot
+    let nights: [NightScore]
+    let isSample: Bool
     let onInfo: () -> Void
+    var onConnect: () -> Void = {}
     var revealOnAppear = true
-
-    private var snapshot: DaySnapshot { state.snapshot(copy) }
+    @Environment(\.copy) private var copy
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.section) {
@@ -115,6 +115,10 @@ struct DayLayout: View {
                 }
             }
 
+            if isSample {
+                SampleBanner(text: copy.sampleBanner, action: onConnect)
+            }
+
             VStack(alignment: .leading, spacing: 16) {
                 OrbitHero(snapshot: snapshot)
                 TimeGraphView(snapshot: snapshot)
@@ -122,11 +126,49 @@ struct DayLayout: View {
 
             MetricColumnsView(snapshot: snapshot)
 
-            SleepScoreChart(nights: Rhythm.nights)
+            SleepScoreChart(nights: nights, isSample: isSample)
         }
+    }
+}
+
+/// Says plainly that the numbers are placeholders, and opens Settings to connect Health.
+private struct SampleBanner: View {
+    let text: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "heart.text.square")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Nova.orange)
+                Text(text)
+                    .font(Typeface.caption)
+                    .foregroundStyle(Nova.bone.opacity(0.85))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Nova.bone.opacity(0.4))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Nova.orange.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Nova.orange.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(AppState.shared)
+        .environmentObject(NotificationManager.shared)
 }

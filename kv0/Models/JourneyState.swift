@@ -82,8 +82,8 @@ struct DaySnapshot {
     let heroText: String
     let orbitStyle: OrbitStyle
     let sleepMinutes: Int
-    /// Time spent driving to and from work today.
-    let journeyMinutes: Int
+    /// Time spent driving to and from work today. Nil until there is a data source for it.
+    let journeyMinutes: Int?
     let nowHour: Double
 
     let dipHour: Double
@@ -92,7 +92,7 @@ struct DaySnapshot {
     var alertnessCurve: [AlertnessPoint]?
     
     init(text: StateCopy, heroValue: Double, heroText: String, orbitStyle: OrbitStyle,
-         sleepMinutes: Int, journeyMinutes: Int, nowHour: Double,
+         sleepMinutes: Int, journeyMinutes: Int?, nowHour: Double,
          dipHour: Double = 15.0, dayStart: Double = 6, dayEnd: Double = 24,
          alertnessCurve: [AlertnessPoint]? = nil) {
         self.text = text
@@ -116,9 +116,10 @@ struct AlertnessPoint: Identifiable {
 }
 
 struct NightScore: Identifiable {
-    let index: Int
+    /// When the night ended, i.e. the morning it belongs to.
+    let date: Date
     let score: Int
-    var id: Int { index }
+    var id: Date { date }
 }
 
 enum Rhythm {
@@ -130,8 +131,12 @@ enum Rhythm {
         return AlertnessPoint(hour: h, level: max(0.05, circadian - dip - wake))
     }
 
-    /// Oldest first; index lines up with `Copy.weekdays`.
-    static let nights: [NightScore] = [72, 80, 68, 85, 78, 82, 86].enumerated().map {
-        NightScore(index: $0.offset, score: $0.element)
+    /// Sample week shown until Apple Health has sleep to read. Oldest first, ending today.
+    static var nights: [NightScore] {
+        let today = Calendar.current.startOfDay(for: Date())
+        return [72, 80, 68, 85, 78, 82, 86].enumerated().map { offset, score in
+            NightScore(date: Calendar.current.date(byAdding: .day, value: offset - 6, to: today)!,
+                       score: score)
+        }
     }
 }

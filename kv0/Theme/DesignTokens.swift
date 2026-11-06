@@ -17,6 +17,7 @@ enum Typeface {
     static let hero = display(140, weight: .medium)
     static let sentence = display(30, weight: .medium)
     static let metric = display(34, weight: .medium)
+    static let stat = display(22, weight: .medium)
     static let body = Font.custom(family, size: 17).weight(.regular)
     static let caption = Font.custom(family, size: 13).weight(.regular)
 

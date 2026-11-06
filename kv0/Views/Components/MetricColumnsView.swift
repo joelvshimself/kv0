@@ -7,7 +7,7 @@ struct MetricColumnsView: View {
     var body: some View {
         HStack(spacing: 12) {
             metric(label: copy.sleepTime, value: copy.duration(snapshot.sleepMinutes))
-            metric(label: copy.journeyDuration, value: copy.duration(snapshot.journeyMinutes))
+            metric(label: copy.journeyDuration, value: snapshot.journeyMinutes.map(copy.duration) ?? "—")
         }
         .fixedSize(horizontal: false, vertical: true)
     }

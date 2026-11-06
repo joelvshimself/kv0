@@ -1,244 +1,115 @@
 import Foundation
 import HealthKit
 
-class HealthKitManager: ObservableObject {
+/// Reads sleep from Apple Health. Nothing is written back and nothing leaves the device.
+final class HealthKitManager {
     static let shared = HealthKitManager()
-    
-    private let healthStore = HKHealthStore()
-    @Published var isAuthorized = false
-    
+
+    private let store = HKHealthStore()
+    private let sleepType = HKCategoryType(.sleepAnalysis)
+
     private init() {}
-    
-    var isHealthDataAvailable: Bool {
-        HKHealthStore.isHealthDataAvailable()
+
+    var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
+
+    /// Whether the system permission sheet has yet to be shown. HealthKit never says whether
+    /// read access was granted, only whether we may still ask.
+    func needsAuthorization() async -> Bool {
+        guard isAvailable else { return false }
+        let status = try? await store.statusForAuthorizationRequest(toShare: [], read: [sleepType])
+        return status == .shouldRequest
     }
-    
+
     func requestAuthorization() async throws {
-        guard isHealthDataAvailable else {
-            throw HealthKitError.notAvailable
-        }
-        
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate)!
-        let restingHeartRateType = HKObjectType.quantityType(forIdentifier: .restingHeartRate)!
-        
-        let typesToRead: Set<HKObjectType> = [
-            sleepType,
-            heartRateType,
-            restingHeartRateType
-        ]
-        
-        try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
-        
-        await MainActor.run {
-            self.isAuthorized = true
-        }
+        guard isAvailable else { return }
+        try await store.requestAuthorization(toShare: [], read: [sleepType])
     }
-    
-    func fetchLastNightSleep() async throws -> SleepData? {
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        
-        let now = Date()
-        let startOfYesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.startOfDay(for: now))!
-        
-        let predicate = HKQuery.predicateForSamples(
-            withStart: startOfYesterday,
-            end: now,
-            options: .strictStartDate
+
+    /// Nights from the last `days` days, oldest first.
+    func recentNights(days: Int = 10) async throws -> [SleepNight] {
+        guard isAvailable else { return [] }
+        let start = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
+        let descriptor = HKSampleQueryDescriptor(
+            predicates: [.categorySample(type: sleepType,
+                                         predicate: HKQuery.predicateForSamples(withStart: start, end: Date()))],
+            sortDescriptors: [SortDescriptor(\.startDate)]
         )
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
-            ) { _, samples, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                
-                guard let sleepSamples = samples as? [HKCategorySample], !sleepSamples.isEmpty else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-                
-                let sleepData = self.processSleepSamples(sleepSamples)
-                continuation.resume(returning: sleepData)
-            }
-            
-            healthStore.execute(query)
-        }
+        let samples = try await descriptor.result(for: store)
+        return Self.nights(from: samples)
     }
-    
-    func fetchRecentSleepSessions(days: Int = 7) async throws -> [SleepData] {
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        
-        let now = Date()
-        let startDate = Calendar.current.date(byAdding: .day, value: -days, to: now)!
-        
-        let predicate = HKQuery.predicateForSamples(
-            withStart: startDate,
-            end: now,
-            options: .strictStartDate
-        )
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
-            ) { _, samples, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                
-                guard let sleepSamples = samples as? [HKCategorySample] else {
-                    continuation.resume(returning: [])
-                    return
-                }
-                
-                let sessions = self.groupSleepSamplesBySession(sleepSamples)
-                continuation.resume(returning: sessions)
-            }
-            
-            healthStore.execute(query)
-        }
-    }
-    
-    private func processSleepSamples(_ samples: [HKCategorySample]) -> SleepData {
-        var deepSleepMinutes = 0
-        var remSleepMinutes = 0
-        var lightSleepMinutes = 0
-        var awakeMinutes = 0
-        
-        var earliestStart: Date?
-        var latestEnd: Date?
-        
-        for sample in samples {
-            let durationMinutes = Int(sample.endDate.timeIntervalSince(sample.startDate) / 60)
-            
-            if earliestStart == nil || sample.startDate < earliestStart! {
-                earliestStart = sample.startDate
-            }
-            if latestEnd == nil || sample.endDate > latestEnd! {
-                latestEnd = sample.endDate
-            }
-            
-            switch sample.value {
-            case HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
-                 HKCategoryValueSleepAnalysis.asleepCore.rawValue:
-                deepSleepMinutes += durationMinutes
-            case HKCategoryValueSleepAnalysis.asleepREM.rawValue:
-                remSleepMinutes += durationMinutes
-            case HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue,
-                 HKCategoryValueSleepAnalysis.inBed.rawValue:
-                lightSleepMinutes += durationMinutes
-            case HKCategoryValueSleepAnalysis.awake.rawValue:
-                awakeMinutes += durationMinutes
-            default:
-                break
-            }
-        }
-        
-        let startTime = earliestStart ?? Date()
-        let endTime = latestEnd ?? Date()
-        let totalMinutes = deepSleepMinutes + remSleepMinutes + lightSleepMinutes
-        
-        return SleepData(
-            startTime: startTime,
-            endTime: endTime,
-            totalMinutes: totalMinutes,
-            deepSleepMinutes: deepSleepMinutes,
-            remSleepMinutes: remSleepMinutes,
-            lightSleepMinutes: lightSleepMinutes,
-            awakeMinutes: awakeMinutes
-        )
-    }
-    
-    private func groupSleepSamplesBySession(_ samples: [HKCategorySample]) -> [SleepData] {
-        guard !samples.isEmpty else { return [] }
-        
-        let sortedSamples = samples.sorted { $0.startDate < $1.startDate }
-        var sessions: [[HKCategorySample]] = []
-        var currentSession: [HKCategorySample] = []
-        
-        for sample in sortedSamples {
-            if currentSession.isEmpty {
-                currentSession.append(sample)
+
+    // MARK: Parsing
+
+    /// Clusters samples into nights (a gap of two hours or more starts a new one), then keeps
+    /// one source per night. iPhone and Apple Watch often both log the same night, and
+    /// adding them together would double it.
+    static func nights(from samples: [HKCategorySample]) -> [SleepNight] {
+        var clusters: [[HKCategorySample]] = []
+        var clusterEnd = Date.distantPast
+        for sample in samples.sorted(by: { $0.startDate < $1.startDate }) {
+            if clusters.isEmpty || sample.startDate.timeIntervalSince(clusterEnd) >= 2 * 3600 {
+                clusters.append([sample])
+                clusterEnd = sample.endDate
             } else {
-                let lastSample = currentSession.last!
-                let timeBetween = sample.startDate.timeIntervalSince(lastSample.endDate)
-                
-                if timeBetween < 2 * 60 * 60 {
-                    currentSession.append(sample)
-                } else {
-                    sessions.append(currentSession)
-                    currentSession = [sample]
-                }
+                clusters[clusters.count - 1].append(sample)
+                clusterEnd = max(clusterEnd, sample.endDate)
             }
         }
-        
-        if !currentSession.isEmpty {
-            sessions.append(currentSession)
-        }
-        
-        return sessions.map { processSleepSamples($0) }
-            .filter { $0.totalMinutes >= 180 }
-            .suffix(7)
-    }
-}
 
-struct SleepData: Identifiable, Codable {
-    let id = UUID()
-    let startTime: Date
-    let endTime: Date
-    let totalMinutes: Int
-    let deepSleepMinutes: Int
-    let remSleepMinutes: Int
-    let lightSleepMinutes: Int
-    let awakeMinutes: Int
-    
-    var qualityScore: Int {
-        let totalSleep = Double(totalMinutes)
-        let deepPercentage = Double(deepSleepMinutes) / totalSleep
-        let remPercentage = Double(remSleepMinutes) / totalSleep
-        let awakePercentage = Double(awakeMinutes) / totalSleep
-        
-        var score = 0.0
-        score += min(25, (deepPercentage / 0.20) * 25)
-        score += min(25, (remPercentage / 0.25) * 25)
-        score += max(0, 50 - awakePercentage * 100)
-        
-        return Int(score)
-    }
-    
-    var durationScore: Int {
-        let optimalMinutes = 8 * 60
-        let minMinutes = 7 * 60
-        let maxMinutes = 9 * 60
-        
-        if totalMinutes >= minMinutes && totalMinutes <= maxMinutes {
-            return 100
-        } else if totalMinutes < minMinutes {
-            let deficit = minMinutes - totalMinutes
-            return max(0, 100 - deficit / 4)
-        } else {
-            let excess = totalMinutes - maxMinutes
-            return max(0, 100 - excess / 6)
+        return clusters.compactMap { cluster in
+            let bySource = Dictionary(grouping: cluster) {
+                $0.sourceRevision.source.bundleIdentifier
+            }
+            let candidates = bySource.values.compactMap(night(from:))
+            // Prefer a source with stages, then the one that saw the most sleep.
+            return candidates.max {
+                ($0.hasStages ? 1 : 0, $0.asleepMinutes) < ($1.hasStages ? 1 : 0, $1.asleepMinutes)
+            }
         }
+        .filter { $0.asleepMinutes >= 120 }
     }
-    
-    var overallScore: Int {
-        (qualityScore + durationScore) / 2
-    }
-}
 
-enum HealthKitError: Error {
-    case notAvailable
-    case authorizationFailed
-    case noData
+    private static func night(from samples: [HKCategorySample]) -> SleepNight? {
+        var deep = 0.0, rem = 0.0, core = 0.0, unspecified = 0.0, awake = 0.0
+        var asleepStart: Date?, asleepEnd: Date?
+        var inBed: [HKCategorySample] = []
+
+        for sample in samples {
+            let minutes = sample.endDate.timeIntervalSince(sample.startDate) / 60
+            guard let value = HKCategoryValueSleepAnalysis(rawValue: sample.value) else { continue }
+            switch value {
+            case .inBed:
+                inBed.append(sample)
+                continue
+            case .awake:
+                awake += minutes
+                continue
+            case .asleepDeep: deep += minutes
+            case .asleepREM: rem += minutes
+            case .asleepCore: core += minutes
+            case .asleepUnspecified: unspecified += minutes
+            @unknown default: continue
+            }
+            asleepStart = min(asleepStart ?? sample.startDate, sample.startDate)
+            asleepEnd = max(asleepEnd ?? sample.endDate, sample.endDate)
+        }
+
+        if let start = asleepStart, let end = asleepEnd {
+            return SleepNight(
+                start: start, end: end,
+                asleepMinutes: Int(deep + rem + core + unspecified),
+                deepMinutes: Int(deep), remMinutes: Int(rem), coreMinutes: Int(core),
+                awakeMinutes: Int(awake),
+                hasStages: deep + rem + core > 0
+            )
+        }
+
+        // iPhone Sleep Schedule only: time in bed is the best estimate available.
+        guard let start = inBed.map(\.startDate).min(),
+              let end = inBed.map(\.endDate).max() else { return nil }
+        let minutes = inBed.reduce(0.0) { $0 + $1.endDate.timeIntervalSince($1.startDate) / 60 }
+        return SleepNight(start: start, end: end, asleepMinutes: Int(minutes),
+                          deepMinutes: 0, remMinutes: 0, coreMinutes: 0,
+                          awakeMinutes: Int(awake), hasStages: false)
+    }
 }

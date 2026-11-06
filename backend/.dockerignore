@@ -1,9 +1,0 @@
-node_modules
-npm-debug.log
-dist
-.env
-data
-certs
-*.db
-*.db-shm
-*.db-wal
