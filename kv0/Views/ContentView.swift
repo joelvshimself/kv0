@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var state: JourneyState = .working
     @State private var showingInfo = false
     @State private var showingSettings = false
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .english
@@ -21,6 +20,7 @@ struct ContentView: View {
             } else {
                 // Re-render each minute so the countdown to the dip and the "now" line move.
                 TimelineView(.periodic(from: .now, by: 60)) { context in
+                    let state = appState.liveState(now: context.date)
                     DayLayout(
                         state: state,
                         snapshot: appState.snapshot(for: state, copy: copy, now: context.date),
@@ -29,6 +29,7 @@ struct ContentView: View {
                         onInfo: { showingInfo = true },
                         onConnect: { showingSettings = true }
                     )
+                    .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: state)
                 }
                 .padding(.horizontal, Space.margin)
                 .padding(.bottom, 16)
@@ -36,38 +37,37 @@ struct ContentView: View {
         }
         .scrollIndicators(.hidden)
         .safeAreaInset(edge: .top) {
-            CornerButtons(copy: copy, onSettings: { showingSettings = true })
+            CornerButtons(copy: copy, showsStatus: !appState.isLoading,
+                          onSettings: { showingSettings = true })
                 .padding(.horizontal, Space.margin)
                 .padding(.top, 4)
         }
-        .safeAreaInset(edge: .bottom) {
-            StatePickerBar(selection: $state)
-                .padding(.horizontal, Space.margin)
-                .padding(.bottom, 8)
-        }
         .background(StarfieldBackground())
         .sheet(isPresented: $showingInfo) {
-            InfoSheet(text: appState.snapshot(for: state, copy: copy).text)
+            InfoSheet(text: appState.snapshot(for: appState.liveState(), copy: copy).text)
         }
         .sheet(isPresented: $showingSettings) {
             SettingsSheet(language: $language)
         }
         .environment(\.copy, copy)
         .preferredColorScheme(.dark)
-        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.reink, value: state)
         .animation(.easeInOut(duration: 0.3), value: language)
         .refreshable {
             await appState.refresh()
         }
         .task {
             await appState.start()
-            state = appState.liveState()
         }
         .onChange(of: scenePhase) { _, phase in
-            guard phase == .active, !appState.isLoading else { return }
-            Task {
-                await appState.refresh()
-                state = appState.liveState()
+            guard !appState.isLoading else { return }
+            switch phase {
+            case .active:
+                appState.startLiveDriving()
+                Task { await appState.refresh() }
+            case .background:
+                appState.stopLiveDriving()
+            default:
+                break
             }
         }
         .onChange(of: language) { _, _ in
@@ -78,13 +78,58 @@ struct ContentView: View {
 
 struct CornerButtons: View {
     let copy: Copy
+    var showsStatus = true
     let onSettings: () -> Void
 
     var body: some View {
         HStack {
+            if showsStatus {
+                TimelineView(.periodic(from: .now, by: 60)) { context in
+                    MomentPill(now: context.date)
+                }
+                .transition(.opacity)
+            }
             Spacer()
             GlassIconButton(systemImage: "gearshape", label: copy.settings, action: onSettings)
         }
+    }
+}
+
+/// Which moment kv0 has picked, and a car when it can see you driving.
+private struct MomentPill: View {
+    let now: Date
+    @EnvironmentObject private var appState: AppState
+    @Environment(\.copy) private var copy
+
+    var body: some View {
+        let state = appState.liveState(now: now)
+        let driving = appState.driveDay?.isDrivingNow == true
+        HStack(spacing: 10) {
+            Circle()
+                .fill(Nova.orange)
+                .frame(width: 8, height: 8)
+                .shadow(color: Nova.orange, radius: 6)
+            Text(copy.state(state).title)
+                .font(Typeface.body.weight(.medium))
+                .foregroundStyle(Nova.bone)
+                .contentTransition(.opacity)
+            if driving {
+                Image(systemName: "car.fill")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Nova.ember)
+                    .accessibilityLabel(copy.prefs.drivingNow)
+            }
+        }
+        .padding(.horizontal, 18)
+        .frame(height: 44)
+        .background(
+            Capsule()
+                .fill(.ultraThinMaterial.opacity(0.5))
+                .background(Capsule().fill(Nova.surface.opacity(0.85)))
+        )
+        .overlay(Capsule().strokeBorder(Nova.hairline, lineWidth: 1))
+        .animation(.easeInOut(duration: 0.4), value: state)
+        .accessibilityElement(children: .combine)
     }
 }
 

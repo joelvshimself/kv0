@@ -19,9 +19,12 @@ final class AppState: ObservableObject {
     @Published private(set) var model: SleepModel?
     @Published private(set) var healthStatus: HealthStatus = .notConnected
     @Published private(set) var lastUpdated: Date?
+    @Published private(set) var driveDay: DriveDay?
+    @Published private(set) var driveStatus: DriveTracker.Status = .notDetermined
 
     private let health = HealthKitManager.shared
     private let notifications = NotificationManager.shared
+    private let drives = DriveTracker()
 
     private init() {}
 
@@ -32,6 +35,7 @@ final class AppState: ObservableObject {
         }
         await refresh()
         isLoading = false
+        startLiveDriving()
 
         await notifications.refreshStatus()
         if notifications.isEnabled, notifications.status == .notDetermined {
@@ -66,8 +70,51 @@ final class AppState: ObservableObject {
             healthStatus = await health.needsAuthorization() ? .notConnected : .noData
         }
         lastUpdated = Date()
+        await refreshDrives()
         await rescheduleReminder()
     }
+
+    // MARK: Driving
+
+    /// Re-reads today's driving. The first call shows the Motion & Fitness prompt.
+    func refreshDrives() async {
+        driveStatus = drives.status
+        guard driveStatus == .authorized || driveStatus == .notDetermined else {
+            driveDay = nil
+            return
+        }
+        driveDay = await drives.day(since: workdayStart)
+        driveStatus = drives.status
+    }
+
+    func enableDriving() async {
+        await refreshDrives()
+        startLiveDriving()
+    }
+
+    /// Switches the moment the instant a drive starts or ends while kv0 is open.
+    func startLiveDriving() {
+        drives.startLive {
+            Task { @MainActor in await AppState.shared.refreshDrives() }
+        }
+    }
+
+    func stopLiveDriving() {
+        drives.stopLive()
+    }
+
+    /// Drives count from an hour before waking, or from 04:00 when wake time is unknown,
+    /// so a late-night shift still belongs to the day it started.
+    private var workdayStart: Date {
+        let now = Date()
+        let calendar = Calendar.current
+        var anchor = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: now)!
+        if anchor > now { anchor = calendar.date(byAdding: .day, value: -1, to: anchor)! }
+        guard let wake = model?.wake else { return anchor }
+        return min(wake.addingTimeInterval(-3600), now)
+    }
+
+    private var drivingKnown: Bool { driveStatus == .authorized && driveDay != nil }
 
     func rescheduleReminder() async {
         await notifications.scheduleDipReminder(dip: model?.dipDate, copy: storedLanguage.copy)
@@ -82,16 +129,33 @@ final class AppState: ObservableObject {
 
     var isSample: Bool { model == nil }
 
-    /// The moment of the day implied by the clock and today's predicted dip.
-    func liveState(now: Date = Date()) -> JourneyState {
-        guard let model else { return .working }
-        let clock = Calendar.current.component(.hour, from: now)
-        let nowHour = model.hour(of: now)
-        let toDip = model.dipHour - nowHour
+    /// Two hours behind the wheel without a ten-minute stop calls for a break.
+    static let longDriveMinutes = 120
 
-        if nowHour - model.wakeHour < 2 { return .morning }
+    /// The moment of the day, chosen automatically. Driving is work: the first drive
+    /// starts the workday, and an hour parked in the evening ends it. Without motion
+    /// access it falls back to the clock.
+    func liveState(now: Date = Date()) -> JourneyState {
+        let clock = Calendar.current.component(.hour, from: now)
+        let toDip = model.map { $0.dipHour - $0.hour(of: now) }
+        let dipClose = toDip.map { $0 > 0 && $0 <= 1.5 } ?? false
+
+        if drivingKnown, let day = driveDay {
+            guard day.firstStart != nil else {
+                return clock >= 18 || clock < 4 ? .finishWork : .morning
+            }
+            if !day.isDrivingNow, let end = day.lastEnd,
+               now.timeIntervalSince(end) >= 3600, clock >= 17 || clock < 4 {
+                return .finishWork
+            }
+            if day.currentStretchMinutes >= Self.longDriveMinutes || dipClose { return .breakDue }
+            return .working
+        }
+
+        guard let model else { return .working }
+        if model.hour(of: now) - model.wakeHour < 2 { return .morning }
         if clock >= 18 || clock < 4 { return .finishWork }
-        if toDip > 0 && toDip <= 1.5 { return .breakDue }
+        if dipClose { return .breakDue }
         return .working
     }
 
@@ -105,6 +169,9 @@ final class AppState: ObservableObject {
         var text = copy.state(state)
         if state == .morning, model.lastNight.score < 70 {
             text = text.with(sentence: copy.morningLightSentence)
+        }
+        if state == .breakDue, (driveDay?.currentStretchMinutes ?? 0) >= Self.longDriveMinutes {
+            text = text.with(sentence: copy.longDriveSentence)
         }
 
         let heroValue: Double
@@ -127,7 +194,7 @@ final class AppState: ObservableObject {
             heroText: heroText,
             orbitStyle: state == .morning ? .rest : .energy,
             sleepMinutes: sleep,
-            journeyMinutes: nil,
+            journeyMinutes: drivingKnown ? driveDay?.minutes : nil,
             nowHour: min(max(nowHour, model.wakeHour), model.dayEnd),
             dipHour: model.dipHour,
             dayStart: model.wakeHour,

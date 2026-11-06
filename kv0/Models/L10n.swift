@@ -21,6 +21,17 @@ struct SettingsCopy {
     let healthUnavailable: String
     let healthNoDataHint: String
     let healthNotConnectedHint: String
+    let driving: String
+    let drivingOn: String
+    let drivingOff: String
+    let drivingNotAsked: String
+    let drivingUnavailable: String
+    let drivingHint: String
+    let drivingOffHint: String
+    let turnOn: String
+    let drivenToday: String
+    let onRoadSince: String
+    let drivingNow: String
     let connect: String
     let openHealth: String
     let refresh: String
@@ -48,6 +59,8 @@ struct Copy {
     let finishWork: StateCopy
     /// Morning sentence after a night scoring under 70.
     let morningLightSentence: String
+    /// Break-due sentence after two hours of driving without a stop.
+    let longDriveSentence: String
 
     let now: String
     let dip: String
@@ -64,7 +77,6 @@ struct Copy {
     let localeIdentifier: String
     let hourUnit: String
     let minuteUnit: String
-    let momentOfDay: String
     let info: String
     let settings: String
     let language: String
@@ -134,11 +146,12 @@ extension Copy {
             ]
         ),
         morningLightSentence: "A lighter night. Keep the hard thing for your clearest hours.",
+        longDriveSentence: "Over two hours behind the wheel. Pull over for fifteen minutes.",
         now: "now",
         dip: "dip",
         graphAccessibility: "Alertness through the day, with a dip at %@",
         sleepTime: "sleep time",
-        journeyDuration: "journey duration",
+        journeyDuration: "driving today",
         sleepScore: "sleep score",
         lastNights: "last 7 nights",
         learningNote: "Based on %d nights from Apple Health. Readings sharpen as kv0 learns your rhythm.",
@@ -147,7 +160,6 @@ extension Copy {
         localeIdentifier: "en",
         hourUnit: "h",
         minuteUnit: "m",
-        momentOfDay: "Moment of the day",
         info: "More about this moment",
         settings: "Settings",
         language: "Language",
@@ -162,6 +174,17 @@ extension Copy {
             healthUnavailable: "Not available on this device",
             healthNoDataHint: "Wear your Apple Watch to bed or turn on Sleep Schedule in the Health app. If you turned access off, allow kv0 in Health under Sharing, then Apps.",
             healthNotConnectedHint: "kv0 reads your sleep to score each night and predict your afternoon dip.",
+            driving: "Driving",
+            drivingOn: "Detecting your drives",
+            drivingOff: "Motion access is off",
+            drivingNotAsked: "Not turned on",
+            drivingUnavailable: "Not available on this device",
+            drivingHint: "kv0 uses your iPhone's motion sensors to notice when you start driving, so your workday starts on its own. No GPS.",
+            drivingOffHint: "Without it, kv0 guesses your workday from the clock. Allow Motion & Fitness for kv0 in iOS Settings.",
+            turnOn: "Turn on",
+            drivenToday: "driven today",
+            onRoadSince: "first drive",
+            drivingNow: "Driving now",
             connect: "Connect",
             openHealth: "Open Health",
             refresh: "Refresh",
@@ -219,11 +242,12 @@ extension Copy {
             ]
         ),
         morningLightSentence: "Tidurmu kurang nyenyak. Simpan hal yang sulit untuk jam-jam paling jernihmu.",
+        longDriveSentence: "Lebih dari dua jam di balik kemudi. Menepilah selama lima belas menit.",
         now: "sekarang",
         dip: "penurunan",
         graphAccessibility: "Tingkat kewaspadaan sepanjang hari, dengan penurunan pada pukul %@",
         sleepTime: "waktu tidur",
-        journeyDuration: "durasi perjalanan",
+        journeyDuration: "menyetir hari ini",
         sleepScore: "skor tidur",
         lastNights: "7 malam terakhir",
         learningNote: "Berdasarkan %d malam dari Apple Health. Hasilnya makin akurat saat kv0 mempelajari ritmemu.",
@@ -232,7 +256,6 @@ extension Copy {
         localeIdentifier: "id",
         hourUnit: "j",
         minuteUnit: "m",
-        momentOfDay: "Momen hari ini",
         info: "Selengkapnya tentang momen ini",
         settings: "Pengaturan",
         language: "Bahasa",
@@ -247,6 +270,17 @@ extension Copy {
             healthUnavailable: "Tidak tersedia di perangkat ini",
             healthNoDataHint: "Pakai Apple Watch saat tidur atau aktifkan Jadwal Tidur di app Kesehatan. Jika akses dimatikan, izinkan kv0 di Kesehatan lewat Berbagi, lalu App.",
             healthNotConnectedHint: "kv0 membaca data tidurmu untuk menilai setiap malam dan memprediksi penurunan energimu di siang hari.",
+            driving: "Mengemudi",
+            drivingOn: "Mendeteksi perjalananmu",
+            drivingOff: "Akses gerakan dimatikan",
+            drivingNotAsked: "Belum diaktifkan",
+            drivingUnavailable: "Tidak tersedia di perangkat ini",
+            drivingHint: "kv0 memakai sensor gerak iPhone untuk mengetahui kapan kamu mulai mengemudi, jadi hari kerjamu dimulai otomatis. Tanpa GPS.",
+            drivingOffHint: "Tanpa akses ini, kv0 menebak hari kerjamu dari jam. Izinkan Gerakan & Kebugaran untuk kv0 di Pengaturan iOS.",
+            turnOn: "Aktifkan",
+            drivenToday: "menyetir hari ini",
+            onRoadSince: "perjalanan pertama",
+            drivingNow: "Sedang mengemudi",
             connect: "Hubungkan",
             openHealth: "Buka Kesehatan",
             refresh: "Muat ulang",

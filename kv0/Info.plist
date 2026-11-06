@@ -20,6 +20,8 @@
 	<string>1</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>kv0 notices when you start driving so your workday and dip countdown start on their own.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SpaceGrotesk.ttf</string>

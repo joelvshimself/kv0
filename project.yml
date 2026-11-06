@@ -22,6 +22,7 @@ targets:
           - SpaceGrotesk.ttf
         UILaunchScreen:
           UIColorName: ""
+        NSMotionUsageDescription: kv0 notices when you start driving so your workday and dip countdown start on their own.
         NSHealthShareUsageDescription: kv0 needs access to your sleep data to provide personalized energy predictions and sleep insights.
     settings:
       base:

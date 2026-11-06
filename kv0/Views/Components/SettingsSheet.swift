@@ -18,6 +18,7 @@ struct SettingsSheet: View {
             VStack(alignment: .leading, spacing: 28) {
                 header
                 section(prefs.health) { healthCard }
+                section(prefs.driving) { drivingCard }
                 section(prefs.reminders) { remindersCard }
                 section(copy.language) { languageOptions }
                 footer
@@ -155,6 +156,77 @@ struct SettingsSheet: View {
         case .noData: prefs.healthNoDataHint
         case .notConnected: prefs.healthNotConnectedHint
         case .connected, .unavailable: nil
+        }
+    }
+
+    // MARK: Driving
+
+    private var drivingCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(spacing: 14) {
+                    IconBadge(systemImage: "car.fill")
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(prefs.driving)
+                            .font(Typeface.body.weight(.medium))
+                            .foregroundStyle(Nova.bone)
+                        HStack(spacing: 6) {
+                            StatusDot(isOn: appState.driveStatus == .authorized)
+                            Text(drivingStatusText)
+                                .font(Typeface.caption)
+                                .foregroundStyle(Nova.bone.opacity(0.6))
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+
+                if appState.driveStatus == .authorized, let day = appState.driveDay {
+                    HStack(spacing: 0) {
+                        Stat(value: copy.duration(day.minutes), label: prefs.drivenToday)
+                        StatDivider()
+                        Stat(value: day.firstStart?.formatted(date: .omitted, time: .shortened) ?? "—",
+                             label: prefs.onRoadSince)
+                    }
+                } else if let hint = drivingHint {
+                    Text(hint)
+                        .font(Typeface.caption)
+                        .foregroundStyle(Nova.bone.opacity(0.6))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                switch appState.driveStatus {
+                case .notDetermined:
+                    Button(prefs.turnOn) {
+                        Task { await appState.enableDriving() }
+                    }
+                    .buttonStyle(PillButtonStyle(prominent: true))
+                case .denied:
+                    Button(prefs.openSettings) {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                    }
+                    .buttonStyle(PillButtonStyle(prominent: true))
+                case .authorized, .unavailable:
+                    EmptyView()
+                }
+            }
+        }
+    }
+
+    private var drivingStatusText: String {
+        switch appState.driveStatus {
+        case .authorized:
+            appState.driveDay?.isDrivingNow == true ? prefs.drivingNow : prefs.drivingOn
+        case .notDetermined: prefs.drivingNotAsked
+        case .denied: prefs.drivingOff
+        case .unavailable: prefs.drivingUnavailable
+        }
+    }
+
+    private var drivingHint: String? {
+        switch appState.driveStatus {
+        case .notDetermined: prefs.drivingHint
+        case .denied: prefs.drivingOffHint
+        case .authorized, .unavailable: nil
         }
     }
 
